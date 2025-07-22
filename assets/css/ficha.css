@@ -66,19 +66,6 @@ body {
     gap: 25px;
 }
 
-.ficha-image-section {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.ficha-tank-image {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    border: 2px solid #e2e8f0;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
 .ficha-section {
     background: #f8f9fa;
     padding: 20px;
@@ -148,21 +135,9 @@ body {
     color: #ffc107; /* Amarelo para custo de metal */
 }
 
-.info-grid {
-    display: grid;
-    grid-template-columns: 1fr; /* Uma coluna por padrão para mobile */
-    gap: 10px;
-}
-
-@media (min-width: 600px) { /* Duas colunas para telas maiores que 600px */
-    .info-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
 .info-group {
-    margin-bottom: 5px; /* Reduzido o margin-bottom */
-    padding: 5px 0; /* Reduzido o padding */
+    margin-bottom: 10px;
+    padding: 8px 0;
     border-bottom: 1px dashed #e0e0e0;
 }
 
@@ -174,20 +149,20 @@ body {
     font-weight: 600;
     color: #495057;
     display: block; /* Garante que o label ocupe sua própria linha */
-    margin-bottom: 2px; /* Reduzido o margin-bottom */
-    font-size: 0.95rem; /* Aumentado um pouco o tamanho da fonte */
+    margin-bottom: 3px;
+    font-size: 0.9rem;
 }
 
 .info-group span:not(.info-label) {
     color: #343a40;
-    font-size: 1.0rem; /* Aumentado o tamanho da fonte */
+    font-size: 0.95rem;
 }
 
 .info-description {
-    font-size: 0.9rem; /* Aumentado o tamanho da fonte */
+    font-size: 0.85rem;
     color: #6c757d;
-    margin-top: 3px; /* Reduzido o margin-top */
-    padding-left: 8px; /* Reduzido o padding-left */
+    margin-top: 5px;
+    padding-left: 10px; /* Indentação para a descrição */
     border-left: 2px solid #ced4da;
 }
 
@@ -198,7 +173,7 @@ body {
     margin: 10px 0;
     text-align: center;
     font-weight: 600;
-    font-size: 0.95rem; /* Aumentado o tamanho da fonte */
+    font-size: 0.9rem;
 }
 
 .status-ok {
@@ -228,7 +203,7 @@ body {
     border-top: 1px solid #e0e0e0;
 }
 
-.save-button, .back-button {
+.save-button, .back-button, .generate-sheet-button {
     padding: 12px 25px;
     border-radius: 8px;
     font-weight: 700;
@@ -262,6 +237,28 @@ body {
     transform: translateY(-2px);
 }
 
+/* Estilo para o botão "Gerar Ficha" na página principal */
+.generate-sheet-button {
+    background: linear-gradient(45deg, #007bff, #0056b3); /* Azul gradiente */
+    color: white;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 1.1rem;
+    margin-top: 30px; /* Espaçamento do blueprint */
+    width: 100%;
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+}
+
+.generate-sheet-button:hover {
+    background: linear-gradient(45deg, #0056b3, #007bff);
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.5);
+    transform: translateY(-3px);
+}
+
 /* Media Queries para responsividade da ficha */
 @media (max-width: 768px) {
     body {
@@ -289,30 +286,21 @@ body {
         font-size: 1.1rem;
         margin-bottom: 10px;
     }
-    
-    /* Aumentar fonte para mobile */
     .stat-item, .info-group span {
-        font-size: 0.9rem; /* Aumentado */
+        font-size: 0.85rem;
     }
     .info-label {
-        font-size: 0.85rem; /* Aumentado */
-    }
-    .info-group span:not(.info-label) {
-        font-size: 0.95rem; /* Aumentado */
+        font-size: 0.8rem;
     }
     .info-description {
-        font-size: 0.8rem; /* Aumentado */
+        font-size: 0.75rem;
     }
-    .status-indicator {
-        font-size: 0.9rem; /* Aumentado */
-    }
-
     .ficha-actions {
         flex-direction: column; /* Botões empilhados em mobile */
         gap: 10px;
         padding: 15px;
     }
-    .save-button, .back-button {
+    .save-button, .back-button, .generate-sheet-button {
         width: 100%;
         padding: 10px 20px;
         font-size: 0.95rem;
