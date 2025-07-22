@@ -134,7 +134,7 @@ const gameData = {
         gun_lengths: {
             short: { name: "Curto", velocity_mod: 0.85, accuracy_long_range_mod: 0.90, turret_maneuver_mod: 1.05, weight_mod: 0.90, cost_mod: 0.90, description: "Leve, manobrável, silhueta baixa. Baixa penetração, trajetória curva, flash alto. Melhor para suporte de infantaria e combate CQC." },
             medium: { name: "Médio", velocity_mod: 1.0, accuracy_long_range_mod: 1.0, turret_maneuver_mod: 1.0, weight_mod: 1.0, cost_mod: 1.0, description: "Equilíbrio, versatilidade." },
-            long: { name: "Longo", velocity_mod: 1.15, accuracy_long_range_mod: 1.10, turret_maneuver_mod: 0.95, weight_mod: 1.10, cost_mod: 1.10, description: "Alta velocidade de saída, melhor penetração, trajetória plana. Pesado, longo, silhueta alta, exige mais tempo de mira. Melhor para combate antitanque a longa distância." },
+            long: { velocity_mod: 1.15, accuracy_long_range_mod: 1.10, turret_maneuver_mod: 0.95, weight_mod: 1.10, cost_mod: 1.10, description: "Alta velocidade de saída, melhor penetração, trajetória plana. Pesado, longo, silhueta alta, exige mais tempo de mira. Melhor para combate antitanque a longa distância." },
         },
         reload_mechanisms: {
             manual: { name: "Manual", cost: 0, weight: 0, rpm_modifier: 1.0, crew_burden: 1.0, reliability_mod: 0, description: "Simples, barato, leve. Cadência de tiro depende da tripulação e calibre, fadiga." },
@@ -575,6 +575,7 @@ function calculateTankPerformance(stats) {
 
 
 // --- FUNÇÃO PRINCIPAL DE CÁLCULO E ATUALIZAÇÃO DA UI ---
+// Esta função agora também retorna os dados calculados para serem salvos
 function updateCalculations() {
     let baseUnitCost = 0; // Custo antes dos modificadores globais (país, doutrina)
     let baseMetalCost = 0; // Custo de metal antes dos modificadores globais
@@ -584,7 +585,6 @@ function updateCalculations() {
     let effectiveArmorSide = 0;
     let totalReliability = gameData.constants.base_reliability; // Começa em 1.0 (100%)
     let crewComfort = gameData.constants.crew_comfort_base; // Começa em 100
-    let currentMaxCrew = 0; // Max crew for the current vehicle type
 
     // Multiplicadores (inicializados em 1)
     let speedRoadMultiplier = 1;
@@ -599,6 +599,7 @@ function updateCalculations() {
 
     let mainArmamentText = 'N/A';
     let mainArmamentCaliber = 0;
+    let mainGunLengthDescription = ''; // Descrição do comprimento do canhão
 
     const vehicleName = document.getElementById('vehicle_name').value || 'Blindado Sem Nome';
     const quantity = parseInt(document.getElementById('quantity').value) || 1;
@@ -637,11 +638,13 @@ function updateCalculations() {
     const doctrineNoteEl = document.getElementById('doctrine_note');
     let doctrineCostModifier = 1; 
     let doctrineMaxCrewMod = 0;
+    let doctrineName = '-';
     if (doctrineData) {
         doctrineCostModifier = doctrineData.cost_modifier;
         speedRoadMultiplier *= doctrineData.speed_modifier;
         speedOffroadMultiplier *= doctrineData.speed_modifier;
         doctrineMaxCrewMod = doctrineData.max_crew_mod || 0;
+        doctrineName = doctrineData.name;
         doctrineNoteEl.textContent = `Doutrina de ${doctrineData.name}: ${doctrineData.description}`;
     } else {
         doctrineNoteEl.textContent = '';
@@ -651,12 +654,16 @@ function updateCalculations() {
     // --- 2. Tipo de Veículo (Chassi) ---
     const vehicleType = document.getElementById('vehicle_type').value;
     let typeData = null; 
+    let currentMaxCrew = 0; // Max crew for the current vehicle type
+    let vehicleTypeName = '-';
+
     if (vehicleType && gameData.components.vehicle_types[vehicleType.split('(')[0].trim()]) { // Adjusted to get base name
         typeData = gameData.components.vehicle_types[vehicleType.split('(')[0].trim()]; // Adjusted to get base name
         baseUnitCost += typeData.cost;
         baseMetalCost += typeData.metal_cost || 0; // Added || 0
         totalWeight += typeData.weight;
         currentMaxCrew = typeData.max_crew; 
+        vehicleTypeName = typeData.name;
         document.getElementById('display_type').textContent = typeData.name;
         document.getElementById('display_doctrine').textContent = doctrineData ? doctrineData.name : '-';
     } else {
@@ -677,6 +684,7 @@ function updateCalculations() {
     // --- 3. Tipo de Locomoção ---
     const mobilityType = document.getElementById('mobility_type').value.split('(')[0].trim(); // Adjusted to get base name
     let mobilityData = null; 
+    let mobilityTypeName = '-';
     if (mobilityType && gameData.components.mobility_types[mobilityType]) { 
         mobilityData = gameData.components.mobility_types[mobilityType];
         baseUnitCost += mobilityData.cost;
@@ -685,12 +693,15 @@ function updateCalculations() {
         speedRoadMultiplier *= mobilityData.speed_road_mult;
         speedOffroadMultiplier *= mobilityData.speed_offroad_mult;
         overallReliabilityMultiplier *= (1 - mobilityData.maintenance_mod);
+        mobilityTypeName = mobilityData.name;
     }
 
     // --- 3.2 Suspensão ---
     const suspensionType = document.getElementById('suspension_type').value.split('(')[0].trim(); // Adjusted to get base name
     let suspensionData = null; 
     const suspensionNoteEl = document.getElementById('suspension_note');
+    let suspensionTypeName = '-';
+    let suspensionDescription = '';
     if (suspensionType && gameData.components.suspension_types[suspensionType]) { 
         suspensionData = gameData.components.suspension_types[suspensionType];
         baseUnitCost += suspensionData.cost;
@@ -701,6 +712,8 @@ function updateCalculations() {
         maneuverabilityMultiplier *= (1 + (suspensionData.offroad_maneuver_mod || 0));
         overallReliabilityMultiplier *= (1 + (suspensionData.reliability_mod || 0));
         suspensionNoteEl.textContent = suspensionData.description;
+        suspensionTypeName = suspensionData.name;
+        suspensionDescription = suspensionData.description;
 
         if (suspensionType === 'torsion_bar' && suspensionData.requires_stabilizer_cost) {
             baseUnitCost += suspensionData.requires_stabilizer_cost;
@@ -715,13 +728,16 @@ function updateCalculations() {
     const enginePower = parseInt(document.getElementById('engine_power').value) || 0;
     let engineData = null; 
     const engineNoteEl = document.getElementById('engine_power_note');
+    let engineTypeName = '-';
+    let enginePowerNote = '';
     if (engineType && gameData.components.engines[engineType]) { 
         engineData = gameData.components.engines[engineType];
+        engineTypeName = engineData.name;
         if (enginePower < engineData.min_power || enginePower > engineData.max_power) {
-            engineNoteEl.textContent = `Potência deve estar entre ${engineData.min_power} e ${engineData.max_power} HP para ${engineData.name}.`;
+            enginePowerNote = `Potência deve estar entre ${engineData.min_power} e ${engineData.max_power} HP para ${engineData.name}.`;
             totalPower = 0;
         } else {
-            engineNoteEl.textContent = `${engineData.description} Potência min/max: ${engineData.min_power}/${engineData.max_power} HP. Consumo base: ${engineData.base_consumption.toFixed(2)} L/HP.`;
+            enginePowerNote = `${engineData.description} Potência min/max: ${engineData.min_power}/${engineData.max_power} HP. Consumo base: ${engineData.base_consumption.toFixed(2)} L/HP.`;
             baseUnitCost += engineData.cost;
             baseMetalCost += engineData.metal_cost || 0; // Added || 0
             totalWeight += engineData.weight;
@@ -733,6 +749,7 @@ function updateCalculations() {
                 overallReliabilityMultiplier -= hpExcess * gameData.constants.hp_reliability_penalty_factor;
             }
         }
+        engineNoteEl.textContent = enginePowerNote;
     } else {
         engineNoteEl.textContent = 'Selecione um tipo de motor válido.';
     }
@@ -740,8 +757,12 @@ function updateCalculations() {
     const fuelType = document.getElementById('fuel_type').value;
     let fuelData = null; 
     const fuelNoteEl = document.getElementById('fuel_note');
+    let fuelTypeName = '-';
+    let fuelTypeDescription = '';
     if (fuelType && gameData.components.fuel_types[fuelType]) { 
         fuelData = gameData.components.fuel_types[fuelType];
+        fuelTypeName = fuelData.name;
+        fuelTypeDescription = fuelData.description;
         // Ensure engineData is valid before using its properties for metal cost calculation
         if (engineData) { 
             baseUnitCost += (engineData.cost * (fuelData.cost_mod - 1));
@@ -761,6 +782,8 @@ function updateCalculations() {
 
     const engineDisposition = document.getElementById('engine_disposition').value;
     let dispositionData = null; 
+    let engineDispositionName = '-';
+    let engineDispositionDescription = '';
     if (engineDisposition && gameData.components.engine_dispositions[engineDisposition]) { 
         dispositionData = gameData.components.engine_dispositions[engineDisposition];
         baseUnitCost += dispositionData.cost;
@@ -771,12 +794,16 @@ function updateCalculations() {
         silhouetteModifier += (dispositionData.silhouette_mod || 0);
         gunDepressionModifier += (dispositionData.gun_depression_mod || 0);
         overallReliabilityMultiplier *= (1 - (dispositionData.engine_vulnerability || 0));
+        engineDispositionName = dispositionData.name;
+        engineDispositionDescription = dispositionData.description;
         document.getElementById('engine_disposition_note').textContent = dispositionData.description;
     }
 
     const transmissionType = document.getElementById('transmission_type').value.split('(')[0].trim(); // Adjusted to get base name
     let transmissionData = null; 
     const transmissionNoteEl = document.getElementById('transmission_note');
+    let transmissionTypeName = '-';
+    let transmissionDescription = '';
     if (transmissionType && gameData.components.transmission_types[transmissionType]) { 
         transmissionData = gameData.components.transmission_types[transmissionType];
         baseUnitCost += transmissionData.cost;
@@ -789,6 +816,8 @@ function updateCalculations() {
         crewComfort += transmissionData.comfort_mod * gameData.constants.crew_comfort_base;
         fuelConsumptionMultiplier *= (1 + (1 - transmissionData.fuel_efficiency_mod));
         transmissionNoteEl.textContent = transmissionData.description;
+        transmissionTypeName = transmissionData.name;
+        transmissionDescription = transmissionData.description;
     } else {
         transmissionNoteEl.textContent = '';
     }
@@ -797,11 +826,15 @@ function updateCalculations() {
     const armorProductionType = document.getElementById('armor_production_type').value;
     let armorProductionData = null; 
     const armorProductionNoteEl = document.getElementById('armor_production_note');
+    let armorProductionTypeName = '-';
+    let armorProductionDescription = '';
     if (armorProductionType && gameData.components.armor_production_types[armorProductionType]) { 
         armorProductionData = gameData.components.armor_production_types[armorProductionType];
         armorEffectiveMultiplier = armorProductionData.effective_armor_factor; 
         overallReliabilityMultiplier *= (1 + (armorProductionData.reliability_mod || 0));
         armorProductionNoteEl.textContent = armorProductionData.description;
+        armorProductionTypeName = armorProductionData.name;
+        armorProductionDescription = armorProductionData.description;
     } else {
         armorProductionNoteEl.textContent = '';
     }
@@ -861,6 +894,7 @@ function updateCalculations() {
 
     // Initialize a bonus factor for additional armor types
     let general_armor_effective_bonus = 0;
+    const selectedAdditionalArmor = []; // Para armazenar os nomes das blindagens adicionais
 
     // Blindagens Adicionais/Modificadoras
     document.querySelectorAll('.form-section:nth-of-type(4) .item-row input[type="checkbox"]:checked').forEach(checkbox => {
@@ -870,6 +904,7 @@ function updateCalculations() {
             baseUnitCost += armorData.cost;
             totalWeight += armorData.weight;
             baseMetalCost += armorData.metal_cost || 0; 
+            selectedAdditionalArmor.push(armorData.name);
             
             // Apply effective armor bonuses from additional armor types
             if (armorData.effective_armor_bonus) {
@@ -903,6 +938,7 @@ function updateCalculations() {
             mainGunCost *= gunLengthData.cost_mod;
             mainGunWeight *= gunLengthData.weight_mod;
             mainGunLengthNoteEl.textContent = gunLengthData.description;
+            mainGunLengthDescription = gunLengthData.name;
             maneuverabilityMultiplier *= gunLengthData.turret_maneuver_mod;
         }
         mainArmamentText = `${mainArmamentCaliber}mm ${gunLengthData ? gunLengthData.name : ''} Canhão`;
@@ -918,12 +954,16 @@ function updateCalculations() {
     const reloadMechanism = document.getElementById('reload_mechanism').value;
     const reloadMechanismData = gameData.components.reload_mechanisms[reloadMechanism]; 
     const reloadMechanismNoteEl = document.getElementById('reload_mechanism_note');
+    let reloadMechanismName = '-';
+    let reloadMechanismDescription = '';
     if (reloadMechanismData) {
         baseUnitCost += reloadMechanismData.cost;
         baseMetalCost += reloadMechanismData.metal_cost || 0; // Added || 0
         totalWeight += reloadMechanismData.weight;
         overallReliabilityMultiplier *= (1 + (reloadMechanismData.reliability_mod || 0));
         reloadMechanismNoteEl.textContent = reloadMechanismData.description;
+        reloadMechanismName = reloadMechanismData.name;
+        reloadMechanismDescription = reloadMechanismData.description;
         if (reloadMechanism === 'autoloader') {
             currentMaxCrew = Math.max(2, currentMaxCrew - 1); 
             document.getElementById('num_crewmen').max = currentMaxCrew;
@@ -956,13 +996,14 @@ function updateCalculations() {
     // Tipos de Munição e Quantidades
     let currentTotalAmmoQty = 0;
     const ammoQtyNoteEl = document.getElementById('ammo_qty_note');
+    const selectedAmmoTypes = []; // Para armazenar os tipos de munição e quantidades
 
     // Store requested quantities first
     const ammoQuantities = {};
     ['ap', 'aphe', 'he', 'apcr'].forEach(ammoType => {
         const checkbox = document.getElementById(`ammo_${ammoType}_checkbox`);
         const qtyInput = document.getElementById(`ammo_${ammoType}_qty`);
-        let qty = parseInt(qtyInput.value) || 0;
+        let qty = parseInt(qtyInput ? qtyInput.value : 0) || 0;
 
         if (checkbox.checked) {
             ammoQuantities[ammoType] = qty; // Store the user's requested quantity
@@ -993,11 +1034,13 @@ function updateCalculations() {
             baseUnitCost += ammoData.cost_per_round * qty;
             baseMetalCost += (ammoData.weight_per_round * 0.1) * qty; // Assuming metal cost is 10% of weight for ammo
             totalWeight += ammoData.weight_per_round * qty;
+            selectedAmmoTypes.push(`${ammoData.name} (${qty})`);
         }
     });
 
 
     // Armamentos Secundários
+    const selectedSecondaryArmaments = []; // Para armazenar os armamentos secundários
     document.querySelectorAll('.form-section:nth-of-type(5) .item-row input[type="checkbox"]').forEach(checkbox => {
         const armamentId = checkbox.id.replace('_checkbox', ''); 
         const qtyInput = document.getElementById(armamentId + '_qty');
@@ -1008,6 +1051,7 @@ function updateCalculations() {
             baseUnitCost += armamentData.cost * qty;
             baseMetalCost += (armamentData.metal_cost || 0) * qty; // Added || 0
             totalWeight += armamentData.weight * qty;
+            selectedSecondaryArmaments.push(`${armamentData.name} (${qty}x)`);
 
             if (armamentData.armor_vulnerability_mod) {
                 effectiveArmorFront *= (1 - armamentData.armor_vulnerability_mod);
@@ -1026,6 +1070,7 @@ function updateCalculations() {
 
 
     // --- 7. Equipamentos Extras ---
+    const selectedExtraEquipment = []; // Para armazenar os equipamentos extras
     document.querySelectorAll('.form-section:nth-of-type(6) .item-row input[type="checkbox"]:checked').forEach(checkbox => {
         const equipmentId = checkbox.id;
         if (gameData.components.equipment[equipmentId]) { 
@@ -1033,6 +1078,7 @@ function updateCalculations() {
             baseUnitCost += equipmentData.cost;
             baseMetalCost += equipmentData.metal_cost || 0; // Added || 0
             totalWeight += equipmentData.weight;
+            selectedExtraEquipment.push(equipmentData.name);
 
             if (equipmentData.range_bonus_percent) fuelConsumptionMultiplier *= (1 - equipmentData.range_bonus_percent);
             if (equipmentData.front_armor_bonus) effectiveArmorFront *= (1 + equipmentData.front_armor_bonus);
@@ -1056,13 +1102,15 @@ function updateCalculations() {
     // --- 8. Tripulação ---
     crewComfort -= numCrewmen * gameData.constants.crew_comfort_penalty_per_crewman;
     const crewNoteEl = document.getElementById('crew_note');
+    let crewNoteText = '';
     if (numCrewmen < 3 && vehicleType !== 'tankette' && vehicleType !== 'armored_car') {
-        crewNoteEl.textContent = 'Tripulação muito pequena para um veículo deste tipo. Isso impactará o desempenho!';
+        crewNoteText = 'Tripulação muito pequena para um veículo deste tipo. Isso impactará o desempenho!';
         crewComfort *= 0.7;
         overallReliabilityMultiplier *= 0.8;
     } else {
-        crewNoteEl.textContent = '';
+        crewNoteText = '';
     }
+    crewNoteEl.textContent = crewNoteText;
     crewComfort = Math.max(0, Math.min(100, crewComfort));
 
 
@@ -1165,18 +1213,22 @@ function updateCalculations() {
     // Saldo de Metais e Status
     document.getElementById('country_metal_balance').textContent = countryMetalBalance.toLocaleString('pt-BR');
     const metalBalanceStatusEl = document.getElementById('metal_balance_status');
+    let metalBalanceStatusText = '';
+    let metalBalanceStatusClass = '';
     if (countryData && baseMetalCost * quantity > 0) {
         if (baseMetalCost * quantity > countryMetalBalance) { 
-            metalBalanceStatusEl.textContent = '⚠️ Saldo de metais insuficiente para esta produção!';
-            metalBalanceStatusEl.className = 'status-warning'; 
+            metalBalanceStatusText = '⚠️ Saldo de metais insuficiente para esta produção!';
+            metalBalanceStatusClass = 'status-warning'; 
         } else {
-            metalBalanceStatusEl.textContent = '✅ Saldo de metais suficiente.';
-            metalBalanceStatusEl.className = 'status-ok'; 
+            metalBalanceStatusText = '✅ Saldo de metais suficiente.';
+            metalBalanceStatusClass = 'status-ok'; 
         }
     } else {
-        metalBalanceStatusEl.textContent = '';
-        metalBalanceStatusEl.className = '';
+        metalBalanceStatusText = '';
+        metalBalanceStatusClass = '';
     }
+    metalBalanceStatusEl.textContent = metalBalanceStatusText;
+    metalBalanceStatusEl.className = metalBalanceStatusClass;
 
     // Status do Design - Ajustado para ser mais flexível
     const statusEl = document.getElementById('status');
@@ -1209,13 +1261,78 @@ function updateCalculations() {
     }
     statusEl.textContent = statusMessage;
     statusEl.className = `status-indicator ${statusClass}`;
+
+    // Retorna todos os dados calculados para serem usados na ficha
+    return {
+        vehicleName,
+        quantity,
+        selectedCountryName,
+        doctrineName,
+        vehicleTypeName,
+        mobilityTypeName,
+        suspensionTypeName,
+        suspensionDescription,
+        engineTypeName,
+        enginePower,
+        fuelTypeName,
+        fuelTypeDescription,
+        engineDispositionName,
+        engineDispositionDescription,
+        transmissionTypeName,
+        transmissionDescription,
+        armorProductionTypeName,
+        armorProductionDescription,
+        armorFront,
+        armorFrontAngle,
+        armorSide,
+        armorTurret,
+        selectedAdditionalArmor,
+        mainArmamentCaliber,
+        mainGunLengthDescription,
+        reloadMechanismName,
+        reloadMechanismDescription,
+        totalAmmoCapacity,
+        currentTotalAmmoQty,
+        selectedAmmoTypes,
+        selectedSecondaryArmaments,
+        selectedExtraEquipment,
+        numCrewmen,
+        crewNoteText,
+        finalUnitCost: Math.round(finalUnitCost).toLocaleString('pt-BR'),
+        totalProductionCost: Math.round(finalUnitCost * quantity).toLocaleString('pt-BR'),
+        totalMetalCost: Math.round(baseMetalCost * quantity).toLocaleString('pt-BR'),
+        totalWeight: Math.round(totalWeight).toLocaleString('pt-BR') + ' kg',
+        totalPower: Math.round(totalPower).toLocaleString('pt-BR') + ' hp',
+        speedRoad: Math.round(finalSpeedRoad).toLocaleString('pt-BR') + ' km/h',
+        speedOffroad: Math.round(finalSpeedOffroad).toLocaleString('pt-BR') + ' km/h',
+        effectiveArmorFront: Math.round(effectiveArmorFront).toLocaleString('pt-BR') + ' mm',
+        effectiveArmorSide: Math.round(effectiveArmorSide).toLocaleString('pt-BR') + ' mm',
+        mainArmamentText,
+        maxRange: Math.round(maxRange).toLocaleString('pt-BR') + ' km',
+        crewComfort: Math.round(crewComfort) + '%',
+        reliability: (finalReliability * 100).toFixed(1) + '%',
+        countryProductionCapacity: countryProductionCapacity.toLocaleString('pt-BR'),
+        producibleUnits,
+        countryMetalBalance: countryMetalBalance.toLocaleString('pt-BR'),
+        metalBalanceStatusText,
+        statusMessage,
+        statusClass
+    };
+}
+
+// Função para gerar a ficha do tanque em uma nova página
+function generateTankSheet() {
+    // Garante que os cálculos estejam atualizados antes de salvar os dados
+    const tankData = updateCalculations(); 
+    localStorage.setItem('tankSheetData', JSON.stringify(tankData));
+    window.open('ficha.html', '_blank'); // Abre a nova página em uma nova aba
 }
 
 // --- INICIALIZAÇÃO ---
 window.onload = function() {
     loadGameDataFromSheets(); // Carrega os dados das planilhas primeiro
 
-    // Adiciona o updateCalculations ao escopo global para que os eventos oninput/onchange no HTML possam chamá-lo
-    // Isso é necessário porque os módulos ES6 não expõem automaticamente suas funções ao escopo global.
+    // Adiciona o updateCalculations e generateTankSheet ao escopo global para que os eventos oninput/onchange no HTML possam chamá-lo
     window.updateCalculations = updateCalculations;
+    window.generateTankSheet = generateTankSheet; // Expor a nova função
 };
