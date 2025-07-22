@@ -21,10 +21,10 @@
         </div>
 
         <div class="ficha-content" id="ficha_content_to_capture">
-            <!-- Imagem do Tanque (Placeholder) -->
+            <!-- Imagem do Tanque Real Correspondente -->
             <div class="ficha-image-section">
-                <img src="https://placehold.co/400x200/495057/ffffff?text=IMAGEM+DO+TANQUE" alt="Imagem do Blindado" class="ficha-tank-image">
-                <p class="text-sm text-gray-500 mt-2">A imagem do seu design será exibida aqui.</p>
+                <img id="ficha_matched_tank_image" src="" alt="Imagem do Blindado" class="ficha-tank-image">
+                <p class="text-sm text-gray-500 mt-2">Seu design se assemelha a: <span id="ficha_matched_tank_name" class="font-semibold text-blue-700"></span></p>
             </div>
 
             <div class="ficha-section main-stats">
@@ -138,6 +138,13 @@
                 // Preencher o cabeçalho
                 document.getElementById('ficha_tank_name').textContent = tankData.vehicleName;
                 document.getElementById('ficha_tank_type_doctrine').textContent = `${tankData.vehicleTypeName} - Doutrina: ${tankData.doctrineName}`;
+
+                // Preencher Imagem e Nome do Tanque Real
+                const matchedImageEl = document.getElementById('ficha_matched_tank_image');
+                const matchedNameEl = document.getElementById('ficha_matched_tank_name');
+                matchedImageEl.src = tankData.matchedRealTankImageUrl;
+                matchedImageEl.alt = tankData.matchedRealTankName;
+                matchedNameEl.textContent = tankData.matchedRealTankName;
 
                 // Preencher Estatísticas Principais
                 document.getElementById('ficha_unit_cost').textContent = tankData.finalUnitCost;
