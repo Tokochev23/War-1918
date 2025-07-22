@@ -21,12 +21,6 @@
         </div>
 
         <div class="ficha-content" id="ficha_content_to_capture">
-            <!-- Imagem do Tanque Real Correspondente -->
-            <div class="ficha-image-section">
-                <img id="ficha_matched_tank_image" src="" alt="Imagem do Blindado" class="ficha-tank-image">
-                <p class="text-sm text-gray-500 mt-2">Seu design se assemelha a: <span id="ficha_matched_tank_name" class="font-semibold text-blue-700"></span></p>
-            </div>
-
             <div class="ficha-section main-stats">
                 <h3>Estatísticas Principais</h3>
                 <div class="stats-grid">
@@ -47,64 +41,62 @@
 
             <div class="ficha-section detailed-info">
                 <h3>Detalhes da Configuração</h3>
-                <div class="info-grid">
-                    <div class="info-group">
-                        <span class="info-label">País de Origem / Doutrina:</span> <span id="ficha_country_doctrine"></span>
-                    </div>
-                    <div class="info-group">
-                        <span class="info-label">Tipo de Veículo:</span> <span id="ficha_vehicle_type"></span>
-                    </div>
-                    <div class="info-group">
-                        <span class="info-label">Tipo de Locomoção:</span> <span id="ficha_mobility_type"></span>
-                    </div>
-                    <div class="info-group">
-                        <span class="info-label">Tipo de Suspensão:</span> <span id="ficha_suspension_type"></span>
-                        <p class="info-description" id="ficha_suspension_description"></p>
-                    </div>
-                    <div class="info-group">
-                        <span class="info-label">Tipo de Motor:</span> <span id="ficha_engine_type"></span>
-                    </div>
-                    <div class="info-group">
-                        <span class="info-label">Tipo de Combustível:</span> <span id="ficha_fuel_type"></span>
-                        <p class="info-description" id="ficha_fuel_description"></p>
-                    </div>
-                    <div class="info-group">
-                        <span class="info-label">Disposição do Motor:</span> <span id="ficha_engine_disposition"></span>
-                        <p class="info-description" id="ficha_engine_disposition_description"></p>
-                    </div>
-                    <div class="info-group">
-                        <span class="info-label">Tipo de Transmissão:</span> <span id="ficha_transmission_type"></span>
-                        <p class="info-description" id="ficha_transmission_description"></p>
-                    </div>
-                    <div class="info-group">
-                        <span class="info-label">Tipo de Produção da Blindagem:</span> <span id="ficha_armor_production_type"></span>
-                        <p class="info-description" id="ficha_armor_production_description"></p>
-                    </div>
-                    <div class="info-group">
-                        <span class="info-label">Blindagens Adicionais:</span> <span id="ficha_additional_armor"></span>
-                    </div>
-                    <div class="info-group">
-                        <span class="info-label">Comprimento Canhão Principal:</span> <span id="ficha_main_gun_length_description"></span>
-                    </div>
-                    <div class="info-group">
-                        <span class="info-label">Mecanismo de Recarga:</span> <span id="ficha_reload_mechanism"></span>
-                        <p class="info-description" id="ficha_reload_mechanism_description"></p>
-                    </div>
-                    <div class="info-group">
-                        <span class="info-label">Capacidade de Munição:</span> <span id="ficha_ammo_capacity"></span>
-                    </div>
-                    <div class="info-group">
-                        <span class="info-label">Tipos de Munição:</span> <span id="ficha_ammo_types"></span>
-                    </div>
-                    <div class="info-group">
-                        <span class="info-label">Armamento Secundário:</span> <span id="ficha_secondary_armaments"></span>
-                    </div>
-                    <div class="info-group">
-                        <span class="info-label">Equipamentos Extras:</span> <span id="ficha_extra_equipment"></span>
-                    </div>
-                    <div class="info-group">
-                        <span class="info-label">Observação da Tripulação:</span> <span id="ficha_crew_note"></span>
-                    </div>
+                <div class="info-group">
+                    <span class="info-label">País de Origem / Doutrina:</span> <span id="ficha_country_doctrine"></span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Tipo de Veículo:</span> <span id="ficha_vehicle_type"></span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Tipo de Locomoção:</span> <span id="ficha_mobility_type"></span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Tipo de Suspensão:</span> <span id="ficha_suspension_type"></span>
+                    <p class="info-description" id="ficha_suspension_description"></p>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Tipo de Motor:</span> <span id="ficha_engine_type"></span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Tipo de Combustível:</span> <span id="ficha_fuel_type"></span>
+                    <p class="info-description" id="ficha_fuel_description"></p>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Disposição do Motor:</span> <span id="ficha_engine_disposition"></span>
+                    <p class="info-description" id="ficha_engine_disposition_description"></p>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Tipo de Transmissão:</span> <span id="ficha_transmission_type"></span>
+                    <p class="info-description" id="ficha_transmission_description"></p>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Tipo de Produção da Blindagem:</span> <span id="ficha_armor_production_type"></span>
+                    <p class="info-description" id="ficha_armor_production_description"></p>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Blindagens Adicionais:</span> <span id="ficha_additional_armor"></span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Comprimento Canhão Principal:</span> <span id="ficha_main_gun_length_description"></span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Mecanismo de Recarga:</span> <span id="ficha_reload_mechanism"></span>
+                    <p class="info-description" id="ficha_reload_mechanism_description"></p>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Capacidade de Munição:</span> <span id="ficha_ammo_capacity"></span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Tipos de Munição:</span> <span id="ficha_ammo_types"></span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Armamento Secundário:</span> <span id="ficha_secondary_armaments"></span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Equipamentos Extras:</span> <span id="ficha_extra_equipment"></span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Observação da Tripulação:</span> <span id="ficha_crew_note"></span>
                 </div>
             </div>
 
@@ -138,13 +130,6 @@
                 // Preencher o cabeçalho
                 document.getElementById('ficha_tank_name').textContent = tankData.vehicleName;
                 document.getElementById('ficha_tank_type_doctrine').textContent = `${tankData.vehicleTypeName} - Doutrina: ${tankData.doctrineName}`;
-
-                // Preencher Imagem e Nome do Tanque Real
-                const matchedImageEl = document.getElementById('ficha_matched_tank_image');
-                const matchedNameEl = document.getElementById('ficha_matched_tank_name');
-                matchedImageEl.src = tankData.matchedRealTankImageUrl;
-                matchedImageEl.alt = tankData.matchedRealTankName;
-                matchedNameEl.textContent = tankData.matchedRealTankName;
 
                 // Preencher Estatísticas Principais
                 document.getElementById('ficha_unit_cost').textContent = tankData.finalUnitCost;
