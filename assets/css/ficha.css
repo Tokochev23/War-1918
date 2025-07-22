@@ -1,0 +1,308 @@
+/* assets/css/ficha.css */
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #e0e0e0; /* Light track for new theme */
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: #a0a0a0; /* Slightly darker thumb */
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #808080; /* Darker on hover */
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); /* Cor de fundo do site de aeronaves */
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Alinha ao topo para melhor visualização em mobile */
+    color: #333;
+}
+
+.ficha-container {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    max-width: 800px; /* Largura máxima para a ficha */
+    width: 100%; /* Garante que ocupe a largura total em telas menores */
+    margin: 20px 0; /* Margem superior e inferior para mobile */
+    display: flex;
+    flex-direction: column;
+}
+
+.ficha-header {
+    background: linear-gradient(45deg, #8B4513, #CD853F); /* Gradiente marrom/laranja */
+    color: white;
+    padding: 25px;
+    text-align: center;
+    border-bottom: 5px solid #6a350f; /* Borda mais escura */
+}
+
+.ficha-header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.ficha-header p {
+    font-size: 1.0rem;
+    opacity: 0.9;
+}
+
+.ficha-content {
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.ficha-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 5px solid #007bff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.ficha-section h3 {
+    color: #495057;
+    margin-bottom: 15px;
+    font-size: 1.25rem;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Uma coluna por padrão para mobile */
+    gap: 10px;
+}
+
+@media (min-width: 600px) { /* Duas colunas para telas maiores que 600px */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #e9ecef;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.stat-item .label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.stat-item span:last-child {
+    font-weight: 500;
+    color: #007bff; /* Cor para valores */
+}
+
+/* Cores específicas para valores */
+.stat-item #ficha_speed_road,
+.stat-item #ficha_speed_offroad,
+.stat-item #ficha_effective_armor_front,
+.stat-item #ficha_effective_armor_side,
+.stat-item #ficha_main_armament,
+.stat-item #ficha_max_range,
+.stat-item #ficha_crew_comfort,
+.stat-item #ficha_reliability {
+    color: #28a745; /* Verde para stats de performance */
+}
+
+.stat-item #ficha_unit_cost,
+.stat-item #ficha_total_production_cost {
+    color: #007bff; /* Azul para custos */
+}
+
+.stat-item #ficha_total_metal_cost {
+    color: #ffc107; /* Amarelo para custo de metal */
+}
+
+.info-group {
+    margin-bottom: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed #e0e0e0;
+}
+
+.info-group:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #495057;
+    display: block; /* Garante que o label ocupe sua própria linha */
+    margin-bottom: 3px;
+    font-size: 0.9rem;
+}
+
+.info-group span:not(.info-label) {
+    color: #343a40;
+    font-size: 0.95rem;
+}
+
+.info-description {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 5px;
+    padding-left: 10px; /* Indentação para a descrição */
+    border-left: 2px solid #ced4da;
+}
+
+/* Status Indicator - Reutilizado do main.css */
+.status-indicator {
+    padding: 8px 15px;
+    border-radius: 20px;
+    margin: 10px 0;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.status-ok {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-warning {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.status-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.ficha-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px;
+    background: #f0f2f5; /* Fundo para os botões */
+    border-top: 1px solid #e0e0e0;
+}
+
+.save-button, .back-button, .generate-sheet-button {
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 1rem;
+}
+
+.save-button {
+    background: #28a745; /* Verde para salvar */
+    color: white;
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+}
+
+.save-button:hover {
+    background: #218838;
+    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+    transform: translateY(-2px);
+}
+
+.back-button {
+    background: #6c757d; /* Cinza para voltar */
+    color: white;
+    box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3);
+}
+
+.back-button:hover {
+    background: #5a6268;
+    box-shadow: 0 6px 15px rgba(108, 117, 125, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Estilo para o botão "Gerar Ficha" na página principal */
+.generate-sheet-button {
+    background: linear-gradient(45deg, #007bff, #0056b3); /* Azul gradiente */
+    color: white;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 1.1rem;
+    margin-top: 30px; /* Espaçamento do blueprint */
+    width: 100%;
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+}
+
+.generate-sheet-button:hover {
+    background: linear-gradient(45deg, #0056b3, #007bff);
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.5);
+    transform: translateY(-3px);
+}
+
+/* Media Queries para responsividade da ficha */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    .ficha-container {
+        margin: 10px 0;
+        border-radius: 10px;
+    }
+    .ficha-header h1 {
+        font-size: 1.8rem;
+    }
+    .ficha-header p {
+        font-size: 0.9rem;
+    }
+    .ficha-content {
+        padding: 15px;
+        gap: 15px;
+    }
+    .ficha-section {
+        padding: 15px;
+        border-radius: 8px;
+    }
+    .ficha-section h3 {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+    .stat-item, .info-group span {
+        font-size: 0.85rem;
+    }
+    .info-label {
+        font-size: 0.8rem;
+    }
+    .info-description {
+        font-size: 0.75rem;
+    }
+    .ficha-actions {
+        flex-direction: column; /* Botões empilhados em mobile */
+        gap: 10px;
+        padding: 15px;
+    }
+    .save-button, .back-button, .generate-sheet-button {
+        width: 100%;
+        padding: 10px 20px;
+        font-size: 0.95rem;
+    }
+}
