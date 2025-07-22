@@ -1,0 +1,327 @@
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #e0e0e0; /* Light track for new theme */
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: #a0a0a0; /* Slightly darker thumb */
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #808080; /* Darker on hover */
+}
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); /* Cor de fundo do site de aeronaves */
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white; /* Fundo branco do container */
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+/* Header Section - Cores do site de aeronaves */
+.header {
+    background: linear-gradient(45deg, #8B4513, #CD853F); /* Gradiente marrom/laranja */
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    padding: 30px;
+}
+
+.form-section {
+    background: #f8f9fa; /* Fundo claro para seções de formulário */
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border-left: 5px solid #007bff; /* Borda azul */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sombra suave */
+}
+
+.form-section h3 {
+    color: #495057; /* Cor de texto para títulos de seção */
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #495057; /* Cor de texto para labels */
+}
+
+/* Inputs e Selects - Fundo branco, texto preto */
+input[type="text"], input[type="number"], select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #dee2e6;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+    background-color: white; /* Fundo branco */
+    color: black; /* Texto preto */
+}
+
+input[type="text"]:focus, input[type="number"]:focus, select:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+/* Opções do Select - Fundo branco, texto preto (garantido) */
+select option {
+    background-color: white !important;
+    color: black !important;
+}
+
+/* Checkbox styling - Mantido como estava, pois já tem bom contraste */
+input[type="checkbox"] {
+    /* Removendo @apply para controle manual de cores */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    display: inline-block;
+    vertical-align: middle;
+    height: 20px;
+    width: 20px;
+    border: 2px solid #6c757d; /* Cor da borda do checkbox */
+    border-radius: 4px;
+    background-color: white; /* Fundo branco do checkbox */
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+input[type="checkbox"]:checked {
+    background-color: #007bff; /* Fundo azul quando checado */
+    border-color: #007bff;
+}
+
+input[type="checkbox"]:checked::after {
+    content: '✔'; /* Símbolo de check */
+    display: block;
+    color: white;
+    font-size: 14px;
+    line-height: 16px;
+    text-align: center;
+}
+
+input[type="checkbox"]:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* Foco azul */
+}
+
+.item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f7fafc; /* Fundo mais claro para linhas de item */
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    margin-bottom: 8px;
+}
+.item-row label {
+    color: #343a40; /* Texto mais escuro para labels em item-row */
+    flex-grow: 1;
+    margin-left: 10px;
+}
+.item-row input[type="number"] {
+    width: 70px;
+    text-align: center;
+    background-color: #e9ecef; /* Fundo cinza claro para inputs em item-row */
+    color: black;
+    border: 1px solid #ced4da;
+}
+
+/* Tooltip style - Mantido como estava */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.8rem;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Summary Panel - Cores do site de aeronaves */
+.summary-panel {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.summary-panel h3 {
+    color: #495057;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.4rem;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+ 
+.summary-item .label {
+    font-weight: 600;
+    color: #495057;
+}
+.summary-item .value {
+    font-weight: 500;
+    color: #343a40;
+}
+
+.summary-item.total {
+    border-bottom: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #007bff;
+}
+
+/* Status Indicator - Cores do site de aeronaves */
+.status-indicator {
+    padding: 8px 15px;
+    border-radius: 20px;
+    margin: 10px 0;
+    text-align: center;
+    font-weight: 600;
+}
+
+.status-ok {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-warning {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.status-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.blueprint-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    text-align: center;
+    border: 1px solid #dee2e6;
+}
+
+.blueprint-section h4 {
+    color: #495057;
+    margin-bottom: 15px;
+}
+
+.blueprint-section img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 2px solid #e2e8f0;
+    margin-top: 10px;
+}
+
+.blueprint-section p {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+/* Media Queries - Mantido como estava */
+@media (max-width: 992px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+    .summary-panel {
+        position: static;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 2rem;
+    }
+    .main-content {
+        padding: 15px;
+    }
+    .form-section, .summary-panel {
+        padding: 15px;
+    }
+}
