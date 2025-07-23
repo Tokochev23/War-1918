@@ -1371,7 +1371,7 @@ function updateCalculations() {
 
     // --- 7. Equipamentos Extras ---
     const selectedExtraEquipment = []; // Para armazenar os equipamentos extras
-    document.querySelectorAll('.form-section:nth-of-type(6) .item-row input[type="checkbox']:checked').forEach(checkbox => {
+    document.querySelectorAll('.form-section:nth-of-type(6) .item-row input[type="checkbox"]:checked').forEach(checkbox => {
         const equipmentId = checkbox.id;
         if (gameData.components.equipment[equipmentId]) { 
             const equipmentData = gameData.components.equipment[equipmentId];
@@ -1620,7 +1620,7 @@ function updateCalculations() {
         speedRoad: Math.round(finalSpeedRoad).toLocaleString('pt-BR') + ' km/h',
         speedOffroad: Math.round(finalSpeedOffroad).toLocaleString('pt-BR') + ' km/h',
         effectiveArmorFront: Math.round(effectiveArmorFront).toLocaleString('pt-BR') + ' mm',
-        effectiveArmorSide: Math.Round(effectiveArmorSide).toLocaleString('pt-BR') + ' mm',
+        effectiveArmorSide: Math.round(effectiveArmorSide).toLocaleString('pt-BR') + ' mm', // Corrigido Math.Round para Math.round
         mainArmamentText,
         maxRange: Math.round(maxRange).toLocaleString('pt-BR') + ' km',
         crewComfort: Math.round(crewComfort) + '%',
