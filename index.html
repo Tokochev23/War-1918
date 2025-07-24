@@ -51,8 +51,23 @@
                             <option value="cruiser_tank">Tanque Cruzador</option>
                             <option value="light_tank_doctrine">Doutrina de Tanques Leves</option>
                             <option value="blitzkrieg">Blitzkrieg</option>
+                            <option value="deep_battle">Batalha Profunda (URSS)</option>
+                            <option value="combined_arms">Armas Combinadas (EUA)</option>
                         </select>
                         <p id="doctrine_note" class="text-sm" style="color: #ffc107;"></p>
+                    </div>
+                </div>
+
+                <!-- Production vs Quality Slider -->
+                <div class="form-section">
+                    <h3>⚖️ Balanço Produção vs. Qualidade</h3>
+                    <div class="form-group">
+                        <label for="production_quality_slider" class="flex justify-between items-center">
+                            <span>Qualidade 💎</span>
+                            <span>Produção 🏭</span>
+                        </label>
+                        <input type="range" id="production_quality_slider" min="0" max="100" value="50" oninput="updateCalculations()">
+                        <p id="production_quality_note" class="text-sm text-center mt-2" style="color: #6c757d;">Equilíbrio entre confiabilidade e capacidade de produção.</p>
                     </div>
                 </div>
 
