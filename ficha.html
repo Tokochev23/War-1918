@@ -21,10 +21,23 @@
         </div>
 
         <div class="ficha-content" id="ficha_content_to_capture">
-            <!-- Imagem do Tanque Real Correspondente -->
+            <!-- Seção de Imagem com Upload e Seleção -->
             <div class="ficha-image-section">
-                <img id="ficha_matched_tank_image" src="" alt="Imagem do Blindado" class="ficha-tank-image">
-                <p class="text-sm text-gray-500 mt-2">Seu design se assemelha a: <span id="ficha_matched_tank_name" class="font-semibold text-blue-700"></span></p>
+                <img id="ficha_matched_tank_image" src="https://placehold.co/400x200/495057/ffffff?text=IMAGEM+DO+TANQUE" alt="Imagem do Blindado" class="ficha-tank-image">
+                <p class="text-sm text-gray-500 mt-2" id="image_source_text">Escolha ou carregue uma imagem de referência.</p>
+                
+                <div class="image-controls">
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="image_upload_input" accept="image/*" class="file-upload-input">
+                        <label for="image_upload_input" class="file-upload-button">Carregar Imagem</label>
+                    </div>
+                    
+                    <select id="real_tank_select" class="real-tank-select">
+                        <option value="">Ou selecione um tanque real...</option>
+                        <!-- Opções de tanques reais serão populadas via JS -->
+                    </select>
+                    <button id="apply_selected_tank" class="apply-button">Aplicar Tanque Selecionado</button>
+                </div>
             </div>
 
             <div class="ficha-section main-stats">
@@ -131,6 +144,14 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const tankDataString = localStorage.getItem('tankSheetData');
+            const realWorldTanksString = localStorage.getItem('realWorldTanksData');
+            let realWorldTanks = [];
+
+            if (realWorldTanksString) {
+                realWorldTanks = JSON.parse(realWorldTanksString);
+                console.log("Dados de tanques reais carregados para a ficha:", realWorldTanks);
+            }
+
             if (tankDataString) {
                 const tankData = JSON.parse(tankDataString);
                 console.log("Dados do tanque carregados para a ficha:", tankData);
@@ -138,13 +159,6 @@
                 // Preencher o cabeçalho
                 document.getElementById('ficha_tank_name').textContent = tankData.vehicleName;
                 document.getElementById('ficha_tank_type_doctrine').textContent = `${tankData.vehicleTypeName} - Doutrina: ${tankData.doctrineName}`;
-
-                // Preencher Imagem e Nome do Tanque Real
-                const matchedImageEl = document.getElementById('ficha_matched_tank_image');
-                const matchedNameEl = document.getElementById('ficha_matched_tank_name');
-                matchedImageEl.src = tankData.matchedRealTankImageUrl;
-                matchedImageEl.alt = tankData.matchedRealTankName;
-                matchedNameEl.textContent = tankData.matchedRealTankName;
 
                 // Preencher Estatísticas Principais
                 document.getElementById('ficha_unit_cost').textContent = tankData.finalUnitCost;
@@ -202,6 +216,49 @@
                 designStatusEl.textContent = tankData.statusMessage;
                 designStatusEl.className = `status-indicator ${tankData.statusClass}`;
 
+                // --- Lógica de Upload/Seleção de Imagem ---
+                const imageUploadInput = document.getElementById('image_upload_input');
+                const realTankSelect = document.getElementById('real_tank_select');
+                const applySelectedTankButton = document.getElementById('apply_selected_tank');
+                const fichaMatchedTankImage = document.getElementById('ficha_matched_tank_image');
+                const imageSourceText = document.getElementById('image_source_text');
+
+                // Popular o dropdown de tanques reais
+                realWorldTanks.sort((a, b) => a.name.localeCompare(b.name)).forEach(tank => {
+                    const option = document.createElement('option');
+                    option.value = tank.id;
+                    option.textContent = tank.name;
+                    realTankSelect.appendChild(option);
+                });
+
+                // Event listener para upload de imagem
+                imageUploadInput.addEventListener('change', (event) => {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            fichaMatchedTankImage.src = e.target.result;
+                            imageSourceText.textContent = `Imagem personalizada para ${tankData.vehicleName}`;
+                            // Limpa a seleção do dropdown se uma imagem for carregada
+                            realTankSelect.value = ""; 
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                // Event listener para aplicar tanque selecionado do dropdown
+                applySelectedTankButton.addEventListener('click', () => {
+                    const selectedTankId = realTankSelect.value;
+                    if (selectedTankId) {
+                        const selectedTank = realWorldTanks.find(tank => tank.id === selectedTankId);
+                        if (selectedTank) {
+                            fichaMatchedTankImage.src = selectedTank.image_url || 'https://placehold.co/400x200/495057/ffffff?text=IMAGEM+DO+TANQUE';
+                            imageSourceText.textContent = `Seu design se assemelha a: ${selectedTank.name}`;
+                            // Limpa o input de arquivo se um tanque for selecionado
+                            imageUploadInput.value = ''; 
+                        }
+                    }
+                });
 
                 // Funcionalidade de salvar como PNG
                 document.getElementById('save_ficha_button').addEventListener('click', () => {
@@ -230,3 +287,4 @@
     </script>
 </body>
 </html>
+
