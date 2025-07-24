@@ -1,7 +1,7 @@
-// js/modules/utils.js
+// js/Modules/utils.js
 
 // Importa REAL_WORLD_TANKS e GAME_CONSTANTS para uso em funções de cálculo e correspondência
-import { REAL_WORLD_TANKS, GAME_CONSTANTS } from './constants.js';
+import { REAL_WORLD_TANKS, GAME_CONSTANTS } from './constants.js'; // Caminho corrigido
 
 // Função auxiliar para limpar e parsear float
 export function cleanAndParseFloat(value) {
@@ -148,7 +148,7 @@ export function getVehicleCategory(playerVehicleTypeName, totalWeight) {
     switch (playerVehicleTypeName) {
         case 'Tankette': return 'tankette';
         case 'Carro Blindado': return 'armored_car';
-        case 'Semi-lagarta': return 'halftrack';
+        case 'Semi-lagartas': return 'halftrack';
         case 'Veículo de Transporte de Infantaria': return 'halftrack'; // Often halftrack based
         case 'Tanque Leve': return 'light_tank';
         case 'Tanque Médio': return 'medium_tank';
