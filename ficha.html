@@ -274,7 +274,8 @@
                         link.click();
                     }).catch(error => {
                         console.error('Erro ao gerar a imagem da ficha:', error);
-                        alert('Ocorreu um erro ao gerar a imagem da ficha. Verifique o console para mais detalhes.');
+                        // Substituído alert() por uma mensagem no console para evitar bloqueio do iframe
+                        console.log('Ocorreu um erro ao gerar a imagem da ficha. Verifique o console para mais detalhes.');
                     });
                 });
 
@@ -287,4 +288,3 @@
     </script>
 </body>
 </html>
-
