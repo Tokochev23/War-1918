@@ -18,31 +18,63 @@ const gameData = {
         infantry_tank: {
             name: "Tanque de Infantaria",
             description: "Concebido para operar em estreita coordenação com a infantaria, priorizando blindagem pesada contra armas antitanque e metralhadoras. Velocidade sacrificada em prol da proteção. Ex: Matilda II.",
-            cost_modifier: 1.25, // +25%
-            speed_modifier: 0.70, // -30%
-            max_crew_mod: -1 // Infantry tanks often have smaller crews due to heavy armor/internal space
+            cost_modifier: 1.30, // +30%
+            speed_modifier: 0.60, // -40%
+            armor_effectiveness_modifier: 1.15, // +15%
+            reliability_modifier: 1.05, // +5%
+            crew_comfort_modifier: 1.05, // +5%
+            max_crew_mod: 0
         },
         cruiser_tank: {
             name: "Tanque Cruzador",
             description: "Projetado para perseguição e exploração, exigindo alta velocidade e manobrabilidade. Tipicamente blindado de forma mais leve e equipado com armamento antitanque. Ex: Tanques Christie, Vickers Medium Mk II.",
-            cost_modifier: 1.15, // +15%
-            speed_modifier: 1.30, // +30%
+            cost_modifier: 1.10, // +10%
+            speed_modifier: 1.35, // +35%
+            armor_effectiveness_modifier: 0.95, // -5%
+            reliability_modifier: 0.95, // -5%
+            maneuverability_modifier: 1.10, // +10%
             max_crew_mod: 0
         },
         light_tank_doctrine: {
             name: "Doutrina de Tanques Leves",
             description: "Primariamente destinado a funções de reconhecimento e constabularia, com o custo sendo o principal fator de design. Blindagem e armamento limitados. Ex: Vickers-Armstrong Light Tank.",
-            cost_modifier: 0.80, // -20%
-            speed_modifier: 1.10, // +10%
+            cost_modifier: 0.75, // -25%
+            speed_modifier: 1.15, // +15%
+            armor_effectiveness_modifier: 0.85, // -15%
+            reliability_modifier: 1.05, // +5%
             max_crew_mod: -2
         },
         blitzkrieg: {
             name: "Blitzkrieg (Alemanha)",
             description: "Filosofia operacional que prioriza mobilidade, coordenação e reação rápida. Enfatiza motores confiáveis, rádios e ópticas de alta qualidade. Ex: Panzer IV, T-34 (inspirado na mobilidade).",
-            cost_modifier: 1.10, // +10%
+            cost_modifier: 1.05, // +5%
             speed_modifier: 1.20, // +20%
-            optics_bonus: 0.05, // Bônus em ópticas
-            radio_bonus: 0.05, // Bônus em rádio
+            reliability_modifier: 1.10, // +10%
+            crew_comfort_modifier: 1.05, // +5%
+            armor_effectiveness_modifier: 0.98, // -2%
+            optics_radio_bonus_multiplier: 0.02, // Bônus adicional se rádio/ópticas selecionadas
+            max_crew_mod: 0
+        },
+        deep_battle: { // Nova doutrina: Batalha Profunda (Soviética)
+            name: "Batalha Profunda (URSS)",
+            description: "Foco na produção em massa, simplicidade e capacidade de avanço rápido. Prioriza quantidade e robustez operacional.",
+            cost_modifier: 0.85, // -15%
+            reliability_modifier: 0.95, // -5%
+            country_production_capacity_bonus: 0.10, // +10% na capacidade de produção do país
+            armor_effectiveness_modifier: 1.05, // +5%
+            speed_modifier: 1.10, // +10%
+            crew_comfort_modifier: 0.90, // -10%
+            max_crew_mod: 0
+        },
+        combined_arms: { // Nova doutrina: Armas Combinadas (Americana)
+            name: "Armas Combinadas (EUA)",
+            description: "Enfatiza versatilidade, conforto da tripulação e suporte logístico. Tanques equilibrados e fáceis de operar.",
+            cost_modifier: 1.10, // +10%
+            reliability_modifier: 1.05, // +5%
+            crew_comfort_modifier: 1.15, // +15%
+            speed_modifier: 1.10, // +10%
+            range_modifier: 1.10, // +10% no alcance máximo
+            country_production_capacity_bonus: 0.05, // +5% na capacidade de produção do país
             max_crew_mod: 0
         }
     },
@@ -235,20 +267,20 @@ const gameData = {
 // Os valores são aproximados para fins de correspondência.
 const realWorldTanks = [
     // --- Estados Unidos ---
-    { id: 'm2a4', name: 'Light Tank M2A4', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m2a4.png', type: 'light_tank', min_weight_kg: 10000, max_weight_kg: 12000, main_gun_caliber_mm: 37, armor_front_mm: 25, speed_road_kmh: 58, mobility_type: 'esteiras', engine_power_hp: 250, doctrine_affinity: ['light_tank_doctrine'] },
-    { id: 'm3_stuart', name: 'Light Tank M3 Stuart', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m3_stuart.png', type: 'light_tank', min_weight_kg: 12000, max_weight_kg: 14000, main_gun_caliber_mm: 37, armor_front_mm: 38, speed_road_kmh: 58, mobility_type: 'esteiras', engine_power_hp: 250, doctrine_affinity: ['light_tank_doctrine'] },
-    { id: 'm22_locust', name: 'Light Tank M22 Locust', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m22_locust.png', type: 'light_tank', min_weight_kg: 7000, max_weight_kg: 8000, main_gun_caliber_mm: 37, armor_front_mm: 25, speed_road_kmh: 64, mobility_type: 'esteiras', engine_power_hp: 162, doctrine_affinity: ['light_tank_doctrine'] },
-    { id: 'm5a1_stuart', name: 'Light Tank M5A1 Stuart', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m5a1_stuart.png', type: 'light_tank', min_weight_kg: 15000, max_weight_kg: 16000, main_gun_caliber_mm: 37, armor_front_mm: 64, speed_road_kmh: 58, mobility_type: 'esteiras', engine_power_hp: 280, doctrine_affinity: ['light_tank_doctrine'] },
-    { id: 'm4_sherman', name: 'Medium Tank M4 Sherman', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m4_sherman.png', type: 'medium_tank', min_weight_kg: 30000, max_weight_kg: 32000, main_gun_caliber_mm: 75, armor_front_mm: 51, speed_road_kmh: 38, mobility_type: 'esteiras', engine_power_hp: 400, doctrine_affinity: ['cruiser_tank'] },
-    { id: 'm4a1_sherman', name: 'Medium Tank M4A1 Sherman', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m4a1_1942_sherman.png', type: 'medium_tank', min_weight_kg: 30000, max_weight_kg: 32000, main_gun_caliber_mm: 75, armor_front_mm: 51, speed_road_kmh: 38, mobility_type: 'esteiras', engine_power_hp: 400, doctrine_affinity: ['cruiser_tank'] },
-    { id: 'm4a2_sherman', name: 'Medium Tank M4A2 Sherman', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m4a2_sherman.png', type: 'medium_tank', min_weight_kg: 31000, max_weight_kg: 33000, main_gun_caliber_mm: 75, armor_front_mm: 64, speed_road_kmh: 42, mobility_type: 'esteiras', engine_power_hp: 410, doctrine_affinity: ['cruiser_tank'] },
-    { id: 'm6a1', name: 'Heavy Tank M6A1', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m6a1.png', type: 'heavy_tank', min_weight_kg: 57000, max_weight_kg: 60000, main_gun_caliber_mm: 76, armor_front_mm: 102, speed_road_kmh: 35, mobility_type: 'esteiras', engine_power_hp: 960, doctrine_affinity: [] },
-    { id: 'm10_gmc', name: '3-inch Gun Motor Carriage M10', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m10.png', type: 'tank_destroyer', min_weight_kg: 28000, max_weight_kg: 30000, main_gun_caliber_mm: 76, armor_front_mm: 57, speed_road_kmh: 48, mobility_type: 'esteiras', engine_power_hp: 375, doctrine_affinity: [] },
-    { id: 'm18_hellcat', name: '76mm Gun Motor Carriage M18 "Hellcat"', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m18_hellcat.png', type: 'tank_destroyer', min_weight_kg: 17000, max_weight_kg: 19000, main_gun_caliber_mm: 76, armor_front_mm: 13, speed_road_kmh: 89, mobility_type: 'esteiras', engine_power_hp: 400, doctrine_affinity: ['cruiser_tank'] },
-    { id: 'm36_jackson', name: '90mm Gun Motor Carriage M36', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m36.png', type: 'tank_destroyer', min_weight_kg: 29000, max_weight_kg: 31000, main_gun_caliber_mm: 90, armor_front_mm: 64, speed_road_kmh: 48, mobility_type: 'esteiras', engine_power_hp: 400, doctrine_affinity: [] },
-    { id: 'm8_hmc_scott', name: '75mm Howitzer Motor Carriage M8 "Scott"', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m8_scott.png', type: 'spg', min_weight_kg: 15000, max_weight_kg: 16000, main_gun_caliber_mm: 75, armor_front_mm: 44, speed_road_kmh: 56, mobility_type: 'esteiras', engine_power_hp: 250, doctrine_affinity: [] },
-    { id: 'lvt_a_1', name: 'Landing Vehicle Tracked (Armored) Mark 1', image_url: 'https://static.encyclopedia.warthunder.com/images/us_lvt_a_1.png', type: 'amphibious_vehicle', min_weight_kg: 15000, max_weight_kg: 16000, main_gun_caliber_mm: 37, armor_front_mm: 12, speed_road_kmh: 40, mobility_type: 'esteiras', engine_power_hp: 250, doctrine_affinity: [] },
-    { id: 'lvt_a_4', name: 'Landing Vehicle Tracked (Armored) Mark 4', image_url: 'https://static.encyclopedia.warthunder.com/images/us_lvt_a_4.png', type: 'amphibious_vehicle', min_weight_kg: 17000, max_weight_kg: 18000, main_gun_caliber_mm: 75, armor_front_mm: 12, speed_road_kmh: 32, mobility_type: 'esteiras', engine_power_hp: 262, doctrine_affinity: [] },
+    { id: 'm2a4', name: 'Light Tank M2A4', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m2a4.png', type: 'light_tank', min_weight_kg: 10000, max_weight_kg: 12000, main_gun_caliber_mm: 37, armor_front_mm: 25, speed_road_kmh: 58, mobility_type: 'esteiras', engine_power_hp: 250, doctrine_affinity: ['light_tank_doctrine', 'combined_arms'] },
+    { id: 'm3_stuart', name: 'Light Tank M3 Stuart', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m3_stuart.png', type: 'light_tank', min_weight_kg: 12000, max_weight_kg: 14000, main_gun_caliber_mm: 37, armor_front_mm: 38, speed_road_kmh: 58, mobility_type: 'esteiras', engine_power_hp: 250, doctrine_affinity: ['light_tank_doctrine', 'combined_arms'] },
+    { id: 'm22_locust', name: 'Light Tank M22 Locust', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m22_locust.png', type: 'light_tank', min_weight_kg: 7000, max_weight_kg: 8000, main_gun_caliber_mm: 37, armor_front_mm: 25, speed_road_kmh: 64, mobility_type: 'esteiras', engine_power_hp: 162, doctrine_affinity: ['light_tank_doctrine', 'combined_arms'] },
+    { id: 'm5a1_stuart', name: 'Light Tank M5A1 Stuart', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m5a1_stuart.png', type: 'light_tank', min_weight_kg: 15000, max_weight_kg: 16000, main_gun_caliber_mm: 37, armor_front_mm: 64, speed_road_kmh: 58, mobility_type: 'esteiras', engine_power_hp: 280, doctrine_affinity: ['light_tank_doctrine', 'combined_arms'] },
+    { id: 'm4_sherman', name: 'Medium Tank M4 Sherman', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m4_sherman.png', type: 'medium_tank', min_weight_kg: 30000, max_weight_kg: 32000, main_gun_caliber_mm: 75, armor_front_mm: 51, speed_road_kmh: 38, mobility_type: 'esteiras', engine_power_hp: 400, doctrine_affinity: ['cruiser_tank', 'combined_arms'] },
+    { id: 'm4a1_sherman', name: 'Medium Tank M4A1 Sherman', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m4a1_1942_sherman.png', type: 'medium_tank', min_weight_kg: 30000, max_weight_kg: 32000, main_gun_caliber_mm: 75, armor_front_mm: 51, speed_road_kmh: 38, mobility_type: 'esteiras', engine_power_hp: 400, doctrine_affinity: ['cruiser_tank', 'combined_arms'] },
+    { id: 'm4a2_sherman', name: 'Medium Tank M4A2 Sherman', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m4a2_sherman.png', type: 'medium_tank', min_weight_kg: 31000, max_weight_kg: 33000, main_gun_caliber_mm: 75, armor_front_mm: 64, speed_road_kmh: 42, mobility_type: 'esteiras', engine_power_hp: 410, doctrine_affinity: ['cruiser_tank', 'combined_arms'] },
+    { id: 'm6a1', name: 'Heavy Tank M6A1', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m6a1.png', type: 'heavy_tank', min_weight_kg: 57000, max_weight_kg: 60000, main_gun_caliber_mm: 76, armor_front_mm: 102, speed_road_kmh: 35, mobility_type: 'esteiras', engine_power_hp: 960, doctrine_affinity: ['combined_arms'] },
+    { id: 'm10_gmc', name: '3-inch Gun Motor Carriage M10', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m10.png', type: 'tank_destroyer', min_weight_kg: 28000, max_weight_kg: 30000, main_gun_caliber_mm: 76, armor_front_mm: 57, speed_road_kmh: 48, mobility_type: 'esteiras', engine_power_hp: 375, doctrine_affinity: ['combined_arms'] },
+    { id: 'm18_hellcat', name: '76mm Gun Motor Carriage M18 "Hellcat"', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m18_hellcat.png', type: 'tank_destroyer', min_weight_kg: 17000, max_weight_kg: 19000, main_gun_caliber_mm: 76, armor_front_mm: 13, speed_road_kmh: 89, mobility_type: 'esteiras', engine_power_hp: 400, doctrine_affinity: ['cruiser_tank', 'combined_arms'] },
+    { id: 'm36_jackson', name: '90mm Gun Motor Carriage M36', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m36.png', type: 'tank_destroyer', min_weight_kg: 29000, max_weight_kg: 31000, main_gun_caliber_mm: 90, armor_front_mm: 64, speed_road_kmh: 48, mobility_type: 'esteiras', engine_power_hp: 400, doctrine_affinity: ['combined_arms'] },
+    { id: 'm8_hmc_scott', name: '75mm Howitzer Motor Carriage M8 "Scott"', image_url: 'https://static.encyclopedia.warthunder.com/images/us_m8_scott.png', type: 'spg', min_weight_kg: 15000, max_weight_kg: 16000, main_gun_caliber_mm: 75, armor_front_mm: 44, speed_road_kmh: 56, mobility_type: 'esteiras', engine_power_hp: 250, doctrine_affinity: ['combined_arms'] },
+    { id: 'lvt_a_1', name: 'Landing Vehicle Tracked (Armored) Mark 1', image_url: 'https://static.encyclopedia.warthunder.com/images/us_lvt_a_1.png', type: 'amphibious_vehicle', min_weight_kg: 15000, max_weight_kg: 16000, main_gun_caliber_mm: 37, armor_front_mm: 12, speed_road_kmh: 40, mobility_type: 'esteiras', engine_power_hp: 250, doctrine_affinity: ['combined_arms'] },
+    { id: 'lvt_a_4', name: 'Landing Vehicle Tracked (Armored) Mark 4', image_url: 'https://static.encyclopedia.warthunder.com/images/us_lvt_a_4.png', type: 'amphibious_vehicle', min_weight_kg: 17000, max_weight_kg: 18000, main_gun_caliber_mm: 75, armor_front_mm: 12, speed_road_kmh: 32, mobility_type: 'esteiras', engine_power_hp: 262, doctrine_affinity: ['combined_arms'] },
 
     // --- Alemanha ---
     { id: 'pzkpfw_ii_ausf_c_f', name: 'Panzerkampfwagen II Ausf. C/F', image_url: 'https://static.encyclopedia.warthunder.com/images/germ_pzkpfw_ii_ausf_f.png', type: 'light_tank', min_weight_kg: 9000, max_weight_kg: 10000, main_gun_caliber_mm: 20, armor_front_mm: 30, speed_road_kmh: 40, mobility_type: 'esteiras', engine_power_hp: 140, doctrine_affinity: ['blitzkrieg'] },
@@ -274,20 +306,20 @@ const realWorldTanks = [
     { id: 'sdkfz_234_puma', name: 'Sd.Kfz. 234 Puma', image_url: null, type: 'armored_car', min_weight_kg: 11000, max_weight_kg: 12000, main_gun_caliber_mm: 50, armor_front_mm: 30, speed_road_kmh: 85, mobility_type: 'rodas', engine_power_hp: 210, doctrine_affinity: ['blitzkrieg'] },
 
     // --- União Soviética ---
-    { id: 't-26', name: 'T-26', image_url: null, type: 'light_tank', min_weight_kg: 9000, max_weight_kg: 10000, main_gun_caliber_mm: 45, armor_front_mm: 15, speed_road_kmh: 30, mobility_type: 'esteiras', engine_power_hp: 90, doctrine_affinity: ['infantry_tank'] },
-    { id: 'bt-7m', name: 'BT-7M', image_url: null, type: 'light_tank', min_weight_kg: 13000, max_weight_kg: 14000, main_gun_caliber_mm: 45, armor_front_mm: 22, speed_road_kmh: 86, mobility_type: 'esteiras_rodas', engine_power_hp: 500, doctrine_affinity: ['cruiser_tank'] },
-    { id: 't-70', name: 'T-70', image_url: null, type: 'light_tank', min_weight_kg: 9000, max_weight_kg: 10000, main_gun_caliber_mm: 45, armor_front_mm: 60, speed_road_kmh: 45, mobility_type: 'esteiras', engine_power_hp: 140, doctrine_affinity: ['light_tank_doctrine'] },
-    { id: 't-34_1940', name: 'T-34 (1940)', image_url: null, type: 'medium_tank', min_weight_kg: 26000, max_weight_kg: 28000, main_gun_caliber_mm: 76, armor_front_mm: 45, speed_road_kmh: 53, mobility_type: 'esteiras', engine_power_hp: 500, doctrine_affinity: ['blitzkrieg', 'cruiser_tank'] },
-    { id: 't-34-85', name: 'T-34-85', image_url: null, type: 'medium_tank', min_weight_kg: 31000, max_weight_kg: 33000, main_gun_caliber_mm: 85, armor_front_mm: 45, speed_road_kmh: 54, mobility_type: 'esteiras', engine_power_hp: 500, doctrine_affinity: ['blitzkrieg', 'cruiser_tank'] },
-    { id: 't-44', name: 'T-44', image_url: null, type: 'medium_tank', min_weight_kg: 31000, max_weight_kg: 32000, main_gun_caliber_mm: 85, armor_front_mm: 120, speed_road_kmh: 50, mobility_type: 'esteiras', engine_power_hp: 520, doctrine_affinity: ['blitzkrieg', 'cruiser_tank'] },
-    { id: 'kv-1_l-11', name: 'KV-1 (L-11)', image_url: 'https://static.encyclopedia.warthunder.com/images/ussr_kv_1_l_11.png', type: 'heavy_tank', min_weight_kg: 43000, max_weight_kg: 45000, main_gun_caliber_mm: 76, armor_front_mm: 75, speed_road_kmh: 35, mobility_type: 'esteiras', engine_power_hp: 500, doctrine_affinity: ['infantry_tank'] },
-    { id: 'kv-1s', name: 'KV-1S', image_url: null, type: 'heavy_tank', min_weight_kg: 42000, max_weight_kg: 44000, main_gun_caliber_mm: 76, armor_front_mm: 82, speed_road_kmh: 43, mobility_type: 'esteiras', engine_power_hp: 600, doctrine_affinity: ['cruiser_tank'] },
-    { id: 'kv-2_1939', name: 'KV-2 (1939) "Rei do Derp"', image_url: null, type: 'heavy_tank', min_weight_kg: 52000, max_weight_kg: 54000, main_gun_caliber_mm: 152, armor_front_mm: 75, speed_road_kmh: 35, mobility_type: 'esteiras', engine_power_hp: 500, doctrine_affinity: ['infantry_tank'] },
-    { id: 'is-2', name: 'IS-2', image_url: null, type: 'heavy_tank', min_weight_kg: 45000, max_weight_kg: 47000, main_gun_caliber_mm: 122, armor_front_mm: 120, speed_road_kmh: 37, mobility_type: 'esteiras', engine_power_hp: 600, doctrine_affinity: ['infantry_tank'] },
-    { id: 'zis-30', name: 'ZiS-30', image_url: null, type: 'tank_destroyer', min_weight_kg: 4000, max_weight_kg: 5000, main_gun_caliber_mm: 57, armor_front_mm: 10, speed_road_kmh: 40, mobility_type: 'esteiras', engine_power_hp: 50, doctrine_affinity: ['light_tank_doctrine'] },
-    { id: 'su-76m', name: 'SU-76M', image_url: null, type: 'spg', min_weight_kg: 10000, max_weight_kg: 11000, main_gun_caliber_mm: 76, armor_front_mm: 35, speed_road_kmh: 45, mobility_type: 'esteiras', engine_power_hp: 170, doctrine_affinity: [] },
-    { id: 'su-100', name: 'SU-100', image_url: null, type: 'tank_destroyer', min_weight_kg: 31000, max_weight_kg: 32000, main_gun_caliber_mm: 100, armor_front_mm: 75, speed_road_kmh: 50, mobility_type: 'esteiras', engine_power_hp: 500, doctrine_affinity: ['blitzkrieg'] },
-    { id: 'su-152', name: 'SU-152 "Zveroboy"', image_url: null, type: 'spg', min_weight_kg: 45000, max_weight_kg: 46000, main_gun_caliber_mm: 152, armor_front_mm: 75, speed_road_kmh: 43, mobility_type: 'esteiras', engine_power_hp: 600, doctrine_affinity: ['infantry_tank'] },
+    { id: 't-26', name: 'T-26', image_url: null, type: 'light_tank', min_weight_kg: 9000, max_weight_kg: 10000, main_gun_caliber_mm: 45, armor_front_mm: 15, speed_road_kmh: 30, mobility_type: 'esteiras', engine_power_hp: 90, doctrine_affinity: ['infantry_tank', 'deep_battle'] },
+    { id: 'bt-7m', name: 'BT-7M', image_url: null, type: 'light_tank', min_weight_kg: 13000, max_weight_kg: 14000, main_gun_caliber_mm: 45, armor_front_mm: 22, speed_road_kmh: 86, mobility_type: 'esteiras_rodas', engine_power_hp: 500, doctrine_affinity: ['cruiser_tank', 'deep_battle'] },
+    { id: 't-70', name: 'T-70', image_url: null, type: 'light_tank', min_weight_kg: 9000, max_weight_kg: 10000, main_gun_caliber_mm: 45, armor_front_mm: 60, speed_road_kmh: 45, mobility_type: 'esteiras', engine_power_hp: 140, doctrine_affinity: ['light_tank_doctrine', 'deep_battle'] },
+    { id: 't-34_1940', name: 'T-34 (1940)', image_url: null, type: 'medium_tank', min_weight_kg: 26000, max_weight_kg: 28000, main_gun_caliber_mm: 76, armor_front_mm: 45, speed_road_kmh: 53, mobility_type: 'esteiras', engine_power_hp: 500, doctrine_affinity: ['blitzkrieg', 'cruiser_tank', 'deep_battle'] },
+    { id: 't-34-85', name: 'T-34-85', image_url: null, type: 'medium_tank', min_weight_kg: 31000, max_weight_kg: 33000, main_gun_caliber_mm: 85, armor_front_mm: 45, speed_road_kmh: 54, mobility_type: 'esteiras', engine_power_hp: 500, doctrine_affinity: ['blitzkrieg', 'cruiser_tank', 'deep_battle'] },
+    { id: 't-44', name: 'T-44', image_url: null, type: 'medium_tank', min_weight_kg: 31000, max_weight_kg: 32000, main_gun_caliber_mm: 85, armor_front_mm: 120, speed_road_kmh: 50, mobility_type: 'esteiras', engine_power_hp: 520, doctrine_affinity: ['blitzkrieg', 'cruiser_tank', 'deep_battle'] },
+    { id: 'kv-1_l-11', name: 'KV-1 (L-11)', image_url: 'https://static.encyclopedia.warthunder.com/images/ussr_kv_1_l_11.png', type: 'heavy_tank', min_weight_kg: 43000, max_weight_kg: 45000, main_gun_caliber_mm: 76, armor_front_mm: 75, speed_road_kmh: 35, mobility_type: 'esteiras', engine_power_hp: 500, doctrine_affinity: ['infantry_tank', 'deep_battle'] },
+    { id: 'kv-1s', name: 'KV-1S', image_url: null, type: 'heavy_tank', min_weight_kg: 42000, max_weight_kg: 44000, main_gun_caliber_mm: 76, armor_front_mm: 82, speed_road_kmh: 43, mobility_type: 'esteiras', engine_power_hp: 600, doctrine_affinity: ['cruiser_tank', 'deep_battle'] },
+    { id: 'kv-2_1939', name: 'KV-2 (1939) "Rei do Derp"', image_url: null, type: 'heavy_tank', min_weight_kg: 52000, max_weight_kg: 54000, main_gun_caliber_mm: 152, armor_front_mm: 75, speed_road_kmh: 35, mobility_type: 'esteiras', engine_power_hp: 500, doctrine_affinity: ['infantry_tank', 'deep_battle'] },
+    { id: 'is-2', name: 'IS-2', image_url: null, type: 'heavy_tank', min_weight_kg: 45000, max_weight_kg: 47000, main_gun_caliber_mm: 122, armor_front_mm: 120, speed_road_kmh: 37, mobility_type: 'esteiras', engine_power_hp: 600, doctrine_affinity: ['infantry_tank', 'deep_battle'] },
+    { id: 'zis-30', name: 'ZiS-30', image_url: null, type: 'tank_destroyer', min_weight_kg: 4000, max_weight_kg: 5000, main_gun_caliber_mm: 57, armor_front_mm: 10, speed_road_kmh: 40, mobility_type: 'esteiras', engine_power_hp: 50, doctrine_affinity: ['light_tank_doctrine', 'deep_battle'] },
+    { id: 'su-76m', name: 'SU-76M', image_url: null, type: 'spg', min_weight_kg: 10000, max_weight_kg: 11000, main_gun_caliber_mm: 76, armor_front_mm: 35, speed_road_kmh: 45, mobility_type: 'esteiras', engine_power_hp: 170, doctrine_affinity: ['deep_battle'] },
+    { id: 'su-100', name: 'SU-100', image_url: null, type: 'tank_destroyer', min_weight_kg: 31000, max_weight_kg: 32000, main_gun_caliber_mm: 100, armor_front_mm: 75, speed_road_kmh: 50, mobility_type: 'esteiras', engine_power_hp: 500, doctrine_affinity: ['blitzkrieg', 'deep_battle'] },
+    { id: 'su-152', name: 'SU-152 "Zveroboy"', image_url: null, type: 'spg', min_weight_kg: 45000, max_weight_kg: 46000, main_gun_caliber_mm: 152, armor_front_mm: 75, speed_road_kmh: 43, mobility_type: 'esteiras', engine_power_hp: 600, doctrine_affinity: ['infantry_tank', 'deep_battle'] },
 
     // --- Reino Unido ---
     { id: 'churchill_iii', name: 'Tank, Infantry, Mk IV (A22) Churchill III', image_url: 'https://static.encyclopedia.warthunder.com/images/uk_a_22b_mk_3_churchill_1942.png', type: 'infantry_tank', min_weight_kg: 38000, max_weight_kg: 40000, main_gun_caliber_mm: 57, armor_front_mm: 102, speed_road_kmh: 28, mobility_type: 'esteiras', engine_power_hp: 350, doctrine_affinity: ['infantry_tank'] },
@@ -885,6 +917,7 @@ function updateCalculations() {
     let effectiveArmorSide = 0;
     let totalReliability = gameData.constants.base_reliability; // Começa em 1.0 (100%)
     let crewComfort = gameData.constants.crew_comfort_base; // Começa em 100
+    let maxRangeModifier = 1; // Novo modificador para alcance
 
     // Multiplicadores (inicializados em 1)
     let speedRoadMultiplier = 1;
@@ -941,11 +974,34 @@ function updateCalculations() {
     let doctrineName = '-';
     if (doctrineData) {
         doctrineCostModifier = doctrineData.cost_modifier;
-        speedRoadMultiplier *= doctrineData.speed_modifier;
-        speedOffroadMultiplier *= doctrineData.speed_modifier;
+        speedRoadMultiplier *= (doctrineData.speed_modifier || 1);
+        speedOffroadMultiplier *= (doctrineData.speed_modifier || 1);
+        armorEffectiveMultiplier *= (doctrineData.armor_effectiveness_modifier || 1);
+        overallReliabilityMultiplier *= (doctrineData.reliability_modifier || 1);
+        crewComfort *= (doctrineData.crew_comfort_modifier || 1);
+        maneuverabilityMultiplier *= (doctrineData.maneuverability_modifier || 1);
+        maxRangeModifier *= (doctrineData.range_modifier || 1);
+        
         doctrineMaxCrewMod = doctrineData.max_crew_mod || 0;
         doctrineName = doctrineData.name;
         doctrineNoteEl.textContent = `Doutrina de ${doctrineData.name}: ${doctrineData.description}`;
+
+        // Bônus específicos da Blitzkrieg para rádio/ópticas
+        if (selectedTankDoctrine === 'blitzkrieg') {
+            if (document.getElementById('radio_equipment').checked) {
+                overallReliabilityMultiplier += (doctrineData.optics_radio_bonus_multiplier || 0);
+                crewComfort += (doctrineData.optics_radio_bonus_multiplier || 0) * gameData.constants.crew_comfort_base;
+            }
+            if (document.getElementById('improved_optics').checked) {
+                overallReliabilityMultiplier += (doctrineData.optics_radio_bonus_multiplier || 0);
+                crewComfort += (doctrineData.optics_radio_bonus_multiplier || 0) * gameData.constants.crew_comfort_base;
+            }
+        }
+        // Bônus de capacidade de produção para doutrinas específicas
+        if (doctrineData.country_production_capacity_bonus) {
+            countryProductionCapacity *= (1 + doctrineData.country_production_capacity_bonus);
+        }
+
     } else {
         doctrineNoteEl.textContent = '';
     }
@@ -1130,7 +1186,7 @@ function updateCalculations() {
     let armorProductionDescription = '';
     if (armorProductionType && gameData.components.armor_production_types[armorProductionType]) { 
         armorProductionData = gameData.components.armor_production_types[armorProductionType];
-        armorEffectiveMultiplier = armorProductionData.effective_armor_factor; 
+        armorEffectiveMultiplier *= armorProductionData.effective_armor_factor; // Aplicar modificador da doutrina aqui
         overallReliabilityMultiplier *= (1 + (armorProductionData.reliability_mod || 0));
         armorProductionNoteEl.textContent = armorProductionData.description;
         armorProductionTypeName = armorProductionData.name;
@@ -1483,6 +1539,7 @@ function updateCalculations() {
     consumptionPer100km = Math.max(1, consumptionPer100km); 
 
     let maxRange = (totalFuelCapacity / consumptionPer100km) * 100;
+    maxRange *= maxRangeModifier; // Aplicar modificador de alcance da doutrina
 
     // --- ATUALIZAÇÃO DA UI ---
     document.getElementById('display_name').textContent = vehicleName;
@@ -1563,18 +1620,18 @@ function updateCalculations() {
     statusEl.className = `status-indicator ${statusClass}`;
 
     // Objeto com os dados do tanque do jogador para encontrar a correspondência real
+    // A correspondência automática foi removida daqui, a seleção será na ficha.
+    // Mantemos os dados para o caso de uma futura reintrodução ou outro uso.
     const playerTankForMatching = {
         vehicleTypeName: vehicleTypeName,
-        totalWeight: totalWeight, // Pass as number
+        totalWeight: totalWeight, 
         mainArmamentCaliber: mainArmamentCaliber,
-        effectiveArmorFront: effectiveArmorFront, // Pass as number
-        speedRoad: finalSpeedRoad, // Pass as number
+        effectiveArmorFront: effectiveArmorFront, 
+        speedRoad: finalSpeedRoad, 
         mobilityTypeName: mobilityTypeName,
-        totalPower: totalPower, // Pass as number
+        totalPower: totalPower, 
         doctrineName: doctrineName
     };
-
-    const matchedRealTank = findBestMatchingTank(playerTankForMatching);
 
     // Retorna todos os dados calculados para serem usados na ficha
     return {
@@ -1604,7 +1661,7 @@ function updateCalculations() {
         mainArmamentCaliber,
         mainGunLengthDescription,
         reloadMechanismName,
-        reloadMechanismDescription,
+        reloadMechanismMechanismDescription,
         totalAmmoCapacity,
         currentTotalAmmoQty,
         selectedAmmoTypes,
@@ -1620,7 +1677,7 @@ function updateCalculations() {
         speedRoad: Math.round(finalSpeedRoad).toLocaleString('pt-BR') + ' km/h',
         speedOffroad: Math.round(finalSpeedOffroad).toLocaleString('pt-BR') + ' km/h',
         effectiveArmorFront: Math.round(effectiveArmorFront).toLocaleString('pt-BR') + ' mm',
-        effectiveArmorSide: Math.round(effectiveArmorSide).toLocaleString('pt-BR') + ' mm', // Corrigido Math.Round para Math.round
+        effectiveArmorSide: Math.round(effectiveArmorSide).toLocaleString('pt-BR') + ' mm', 
         mainArmamentText,
         maxRange: Math.round(maxRange).toLocaleString('pt-BR') + ' km',
         crewComfort: Math.round(crewComfort) + '%',
@@ -1631,8 +1688,8 @@ function updateCalculations() {
         metalBalanceStatusText,
         statusMessage,
         statusClass,
-        matchedRealTankName: matchedRealTank ? matchedRealTank.name : 'N/A',
-        matchedRealTankImageUrl: matchedRealTank ? matchedRealTank.image_url : 'https://placehold.co/400x200/495057/ffffff?text=IMAGEM+DO+TANQUE'
+        // matchedRealTankName e matchedRealTankImageUrl não são mais preenchidos automaticamente aqui
+        // Eles serão manipulados na ficha.html
     };
 }
 
@@ -1651,7 +1708,9 @@ window.onload = function() {
         summaryPanel.title = 'Clique para gerar a ficha detalhada do blindado'; // Tooltip
         summaryPanel.addEventListener('click', () => {
             const tankData = updateCalculations(); 
+            // Salva os dados do tanque do jogador E a lista de tanques reais no localStorage
             localStorage.setItem('tankSheetData', JSON.stringify(tankData));
+            localStorage.setItem('realWorldTanksData', JSON.stringify(realWorldTanks)); // Passa a lista de tanques reais
             window.open('ficha.html', '_blank'); // Abre a nova página em uma nova aba
         });
     }
