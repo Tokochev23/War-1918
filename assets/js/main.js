@@ -166,7 +166,7 @@ const gameData = {
         gun_lengths: {
             short: { name: "Curto", velocity_mod: 0.85, accuracy_long_range_mod: 0.90, turret_maneuver_mod: 1.05, weight_mod: 0.90, cost_mod: 0.90, description: "Leve, manobrável, silhueta baixa. Baixa penetração, trajetória curva, flash alto. Melhor para suporte de infantaria e combate CQC." },
             medium: { name: "Médio", velocity_mod: 1.0, accuracy_long_range_mod: 1.0, turret_maneuver_mod: 1.0, weight_mod: 1.0, cost_mod: 1.0, description: "Equilíbrio, versatilidade." },
-            long: { name: "Longo", velocity_mod: 1.15, accuracy_long_range_mod: 1.10, turret_maneuver_mod: 0.95, weight_mod: 1.10, cost_mod: 1.10, description: "Alta velocidade de saída, melhor penetração, trajetória plana. Pesado, longo, silhueta alta, exige mais tempo de mira. Melhor para combate antitanque a longa distância." },
+            long: { velocity_mod: 1.15, accuracy_long_range_mod: 1.10, turret_maneuver_mod: 0.95, weight_mod: 1.10, cost_mod: 1.10, description: "Alta velocidade de saída, melhor penetração, trajetória plana. Pesado, longo, silhueta alta, exige mais tempo de mira. Melhor para combate antitanque a longa distância." },
         },
         reload_mechanisms: {
             manual: { name: "Manual", cost: 0, weight: 0, rpm_modifier: 1.0, crew_burden: 1.0, reliability_mod: 0, description: "Simples, barato, leve. Cadência de tiro depende da tripulação e calibre, fadiga." },
@@ -1661,7 +1661,7 @@ function updateCalculations() {
         mainArmamentCaliber,
         mainGunLengthDescription,
         reloadMechanismName,
-        reloadMechanismMechanismDescription,
+        reloadMechanismDescription, // Corrected variable name here
         totalAmmoCapacity,
         currentTotalAmmoQty,
         selectedAmmoTypes,
