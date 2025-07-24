@@ -1,7 +1,7 @@
-// js/modules/uiUpdater.js
+// js/Modules/uiUpdater.js
 
 // Importa funções necessárias para o status e cálculos de performance
-import { calculateTankPerformance } from './utils.js';
+import { calculateTankPerformance } from './utils.js'; // Caminho corrigido
 
 /**
  * Atualiza a interface do usuário com os resultados calculados.
