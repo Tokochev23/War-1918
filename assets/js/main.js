@@ -1,11 +1,11 @@
 // assets/js/main.js
 
 // --- Importações de Módulos ---
-import { GAME_CONSTANTS, REAL_WORLD_TANKS } from './Module/constants.js';
-import { DOCTRINES, COMPONENTS, CREW_ROLES } from './Module/gameDataStructures.js';
-import { cleanAndParseFloat, calculateEffectiveArmor, calculateTankPerformance, getVehicleCategory, numericalAttributeRanges, calculateNumericalRanges } from './Module/utils.js';
-import { loadGameDataFromSheets, populateCountryDropdown } from './Module/sheetsLoader.js';
-import { updateUI } from './Module/uiUpdater.js';
+import { GAME_CONSTANTS, REAL_WORLD_TANKS } from './Modules/constants.js';
+import { DOCTRINES, COMPONENTS, CREW_ROLES } from './Modules/gameDataStructures.js';
+import { cleanAndParseFloat, calculateEffectiveArmor, calculateTankPerformance, getVehicleCategory, numericalAttributeRanges, calculateNumericalRanges } from './Modules/utils.js';
+import { loadGameDataFromSheets, populateCountryDropdown } from './Modules/sheetsLoader.js';
+import { updateUI } from './Modules/uiUpdater.js';
 
 // --- Objeto Global de Dados do Jogo ---
 // gameData.countries será preenchido dinamicamente por sheetsLoader.js
