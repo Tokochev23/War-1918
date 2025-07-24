@@ -356,7 +356,7 @@ const realWorldTanks = [
     { id: 'cromwell_v', name: 'Tank, Cruiser, Mk VIII, Cromwell V (A27M)', image_url: null, type: 'cruiser_tank', min_weight_kg: 27000, max_weight_kg: 29000, main_gun_caliber_mm: 75, armor_front_mm: 76, speed_road_kmh: 64, mobility_type: 'esteiras', engine_power_hp: 600, doctrine_affinity: ['cruiser_tank'] },
     { id: 'comet_i', name: 'Tank, Cruiser, Mk VIII, Comet I (A34)', image_url: null, type: 'cruiser_tank', min_weight_kg: 32000, max_weight_kg: 34000, main_gun_caliber_mm: 77, armor_front_mm: 102, speed_road_kmh: 50, mobility_type: 'esteiras', engine_power_hp: 600, doctrine_affinity: ['cruiser_tank'] },
     { id: 'valentine', name: 'Tank, Infantry, Mk III Valentine', image_url: null, type: 'infantry_tank', min_weight_kg: 16000, max_weight_kg: 17000, main_gun_caliber_mm: 40, armor_front_mm: 60, speed_road_kmh: 24, mobility_type: 'esteiras', engine_power_hp: 131, doctrine_affinity: ['infantry_tank'] },
-    { id: 'matilda_iii', name: 'Tank, Infantry, Mk II Matilda II (A12)', image_url: null, type: 'infantry_tank', min_weight_kg: 26000, max_weight_kg: 28000, main_gun_caliber_mm: 40, armor_front_mm: 78, speed_road_kmh: 24, mobility_type: 'esteiras', engine_power_hp: 174, doctrine_affinity: ['infantry_tank'] },
+    { id: 'matilda_iii', name: 'Tank, Infantry, Mk II Matilda II (A12)', image_url: null, type: 'infantry_tank', min_weight_kg: 26000, max_weight_kg: 28000, main_gun_caliber_mm: 40, armor_front_mm: 78, speed_road: 24, mobility_type: 'esteiras', engine_power_hp: 174, doctrine_affinity: ['infantry_tank'] },
     { id: 'crusader', name: 'Tank, Cruiser, Mk VI Crusader', image_url: null, type: 'cruiser_tank', min_weight_kg: 19000, max_weight_kg: 20000, main_gun_caliber_mm: 40, armor_front_mm: 40, speed_road_kmh: 43, mobility_type: 'esteiras', engine_power_hp: 340, doctrine_affinity: ['cruiser_tank'] },
     { id: 'achilles', name: 'Tank Destroyer, M10 Achilles (17-pdr)', image_url: null, type: 'tank_destroyer', min_weight_kg: 29000, max_weight_kg: 31000, main_gun_caliber_mm: 76, armor_front_mm: 57, speed_road_kmh: 48, mobility_type: 'esteiras', engine_power_hp: 375, doctrine_affinity: [] },
     { id: 'archer', name: 'Tank Destroyer, Self Propelled, Archer', image_url: null, type: 'tank_destroyer', min_weight_kg: 16000, max_weight_kg: 17000, main_gun_caliber_mm: 76, armor_front_mm: 14, speed_road_kmh: 32, mobility_type: 'esteiras', engine_power_hp: 131, doctrine_affinity: [] },
@@ -1003,21 +1003,47 @@ function updateCalculations() {
     const totalAmmoCapacityInput = document.getElementById('total_ammo_capacity');
     const productionQualitySliderValue = parseInt(document.getElementById('production_quality_slider').value) || 50;
 
-    // --- Referências a Elementos UI ---
-    const countryBonusNoteEl = document.getElementById('country_bonus_note');
-    const doctrineNoteEl = document.getElementById('doctrine_note');
-    const suspensionNoteEl = document.getElementById('suspension_note');
-    const engineNoteEl = document.getElementById('engine_power_note');
-    const fuelNoteEl = document.getElementById('fuel_note');
-    const armorProductionNoteEl = document.getElementById('armor_production_note');
-    const mainGunLengthNoteEl = document.getElementById('main_gun_length_note');
-    const reloadMechanismNoteEl = document.getElementById('reload_mechanism_note');
-    const totalAmmoCapacityNoteEl = document.getElementById('total_ammo_capacity_note');
-    const ammoQtyNoteEl = document.getElementById('ammo_qty_note');
-    const crewNoteEl = document.getElementById('crew_note');
-    const metalBalanceStatusEl = document.getElementById('metal_balance_status');
-    const statusEl = document.getElementById('status');
-    const productionQualityNoteEl = document.getElementById('production_quality_note');
+    // --- Referências a Elementos UI (coletadas uma vez) ---
+    const uiElements = {
+        countryBonusNoteEl: document.getElementById('country_bonus_note'),
+        doctrineNoteEl: document.getElementById('doctrine_note'),
+        suspensionNoteEl: document.getElementById('suspension_note'),
+        engineNoteEl: document.getElementById('engine_power_note'),
+        fuelNoteEl: document.getElementById('fuel_note'),
+        armorProductionNoteEl: document.getElementById('armor_production_note'),
+        mainGunLengthNoteEl: document.getElementById('main_gun_length_note'),
+        reloadMechanismNoteEl: document.getElementById('reload_mechanism_note'),
+        totalAmmoCapacityNoteEl: document.getElementById('total_ammo_capacity_note'),
+        ammoQtyNoteEl: document.getElementById('ammo_qty_note'),
+        crewNoteEl: document.getElementById('crew_note'),
+        metalBalanceStatusEl: document.getElementById('metal_balance_status'),
+        statusEl: document.getElementById('status'),
+        productionQualityNoteEl: document.getElementById('production_quality_note'),
+        displayTypeEl: document.getElementById('display_type'),
+        displayDoctrineEl: document.getElementById('display_doctrine'),
+        numCrewmenInput: document.getElementById('num_crewmen'),
+        displayFuelTypeEl: document.getElementById('fuel_type'), // Adicionado para acesso à descrição do combustível
+        displayEngineDispositionNoteEl: document.getElementById('engine_disposition_note'),
+        displayTransmissionNoteEl: document.getElementById('transmission_note'),
+        displayMainArmamentEl: document.getElementById('main_armament'),
+        displayUnitCostEl: document.getElementById('unit_cost'),
+        displayTotalProductionCostEl: document.getElementById('total_production_cost'),
+        displayTotalMetalCostEl: document.getElementById('total_metal_cost'),
+        displayTotalWeightEl: document.getElementById('total_weight'),
+        displayTotalPowerEl: document.getElementById('total_power'),
+        displaySpeedRoadEl: document.getElementById('speed_road'),
+        displaySpeedOffroadEl: document.getElementById('speed_offroad'),
+        displayEffectiveArmorFrontEl: document.getElementById('effective_armor_front_display'),
+        displayEffectiveArmorSideEl: document.getElementById('effective_armor_side_display'),
+        displayMaxRangeEl: document.getElementById('max_range'),
+        displayCrewComfortEl: document.getElementById('crew_comfort_display'),
+        displayReliabilityEl: document.getElementById('reliability_display'),
+        displayCountryProductionCapacityEl: document.getElementById('country_production_capacity'),
+        displayProducibleUnitsEl: document.getElementById('producible_units'),
+        displayCountryMetalBalanceEl: document.getElementById('country_metal_balance'),
+        totalCostLabelEl: document.getElementById('total_cost_label')
+    };
+
 
     // --- Dados do Tanque para Retorno ---
     let tankDataOutput = {};
@@ -1026,8 +1052,9 @@ function updateCalculations() {
 
     /**
      * Processa informações básicas do veículo, país e doutrina.
+     * @param {object} uiElements - Referências aos elementos da UI.
      */
-    function processBasicInfoAndDoctrine() {
+    function processBasicInfoAndDoctrine(uiElements) {
         const countryData = gameData.countries[selectedCountryName];
         if (countryData) {
             countryProductionCapacity = parseFloat(countryData.production_capacity) || 0;
@@ -1042,9 +1069,9 @@ function updateCalculations() {
 
             countryCostReductionFactor = Math.min(0.75, civilTechReduction + urbanizationReduction); 
             
-            countryBonusNoteEl.textContent = `Bônus de ${selectedCountryName}: Tec Veículos ${countryTechLevelVehicles}, Tec Civil ${civilTechLevel}, Urbanização ${urbanizationLevel}. Redução de Custo total: ${(countryCostReductionFactor * 100).toFixed(1)}%.`;
+            uiElements.countryBonusNoteEl.textContent = `Bônus de ${selectedCountryName}: Tec Veículos ${countryTechLevelVehicles}, Tec Civil ${civilTechLevel}, Urbanização ${urbanizationLevel}. Redução de Custo total: ${(countryCostReductionFactor * 100).toFixed(1)}%.`;
         } else {
-            countryBonusNoteEl.textContent = '';
+            uiElements.countryBonusNoteEl.textContent = '';
         }
 
         const doctrineData = gameData.doctrines[selectedTankDoctrine]; 
@@ -1060,7 +1087,7 @@ function updateCalculations() {
             
             doctrineMaxCrewMod = doctrineData.max_crew_mod || 0;
             doctrineName = doctrineData.name;
-            doctrineNoteEl.textContent = `Doutrina de ${doctrineData.name}: ${doctrineData.description}`;
+            uiElements.doctrineNoteEl.textContent = `Doutrina de ${doctrineData.name}: ${doctrineData.description}`;
 
             // Novos modificadores de doutrina
             armorCostWeightReduction = doctrineData.armor_cost_weight_reduction_percent || 0;
@@ -1095,7 +1122,7 @@ function updateCalculations() {
                 baseMetalCost *= (1 - doctrineData.metal_efficiency_bonus);
             }
         } else {
-            doctrineNoteEl.textContent = '';
+            uiElements.doctrineNoteEl.textContent = '';
         }
 
         tankDataOutput.vehicleName = vehicleName;
@@ -1106,8 +1133,9 @@ function updateCalculations() {
 
     /**
      * Processa as seleções de chassi e mobilidade.
+     * @param {object} uiElements - Referências aos elementos da UI.
      */
-    function processChassisAndMobility() {
+    function processChassisAndMobility(uiElements) {
         let currentMaxCrew = 0;
         let typeData = null;
         let vehicleTypeName = '-';
@@ -1119,19 +1147,19 @@ function updateCalculations() {
             totalWeight += typeData.weight;
             currentMaxCrew = typeData.max_crew; 
             vehicleTypeName = typeData.name;
-            document.getElementById('display_type').textContent = typeData.name;
-            document.getElementById('display_doctrine').textContent = doctrineName;
+            uiElements.displayTypeEl.textContent = typeData.name;
+            uiElements.displayDoctrineEl.textContent = doctrineName;
         } else {
-            document.getElementById('display_type').textContent = '-';
-            document.getElementById('display_doctrine').textContent = '-';
+            uiElements.displayTypeEl.textContent = '-';
+            uiElements.displayDoctrineEl.textContent = '-';
         }
         
         currentMaxCrew += doctrineMaxCrewMod;
         currentMaxCrew = Math.max(2, currentMaxCrew); 
 
         numCrewmen = Math.min(numCrewmen, currentMaxCrew);
-        document.getElementById('num_crewmen').value = numCrewmen;
-        document.getElementById('num_crewmen').max = currentMaxCrew;
+        uiElements.numCrewmenInput.value = numCrewmen;
+        uiElements.numCrewmenInput.max = currentMaxCrew;
 
         let mobilityData = null; 
         let mobilityTypeName = '-';
@@ -1158,7 +1186,7 @@ function updateCalculations() {
             speedOffroadMultiplier *= (suspensionData.speed_offroad_mult || 1);
             maneuverabilityMultiplier *= (1 + (suspensionData.offroad_maneuver_mod || 0));
             overallReliabilityMultiplier *= (1 + (suspensionData.reliability_mod || 0));
-            suspensionNoteEl.textContent = suspensionData.description;
+            uiElements.suspensionNoteEl.textContent = suspensionData.description;
             suspensionTypeName = suspensionData.name;
             suspensionDescription = suspensionData.description;
 
@@ -1167,7 +1195,7 @@ function updateCalculations() {
                 totalWeight += suspensionData.requires_stabilizer_weight;
             }
         } else {
-            suspensionNoteEl.textContent = '';
+            uiElements.suspensionNoteEl.textContent = '';
         }
 
         tankDataOutput.vehicleTypeName = vehicleTypeName;
@@ -1180,9 +1208,10 @@ function updateCalculations() {
 
     /**
      * Processa as seleções de motor e propulsão.
+     * @param {object} uiElements - Referências aos elementos da UI.
      * @param {object} currentEngineData - Dados do motor atualmente selecionado.
      */
-    function processEngineAndPropulsion(currentEngineData) {
+    function processEngineAndPropulsion(uiElements, currentEngineData) {
         let engineTypeName = '-';
         let enginePowerNote = '';
         if (engineType && gameData.components.engines[engineType]) { 
@@ -1217,9 +1246,9 @@ function updateCalculations() {
                     overallReliabilityMultiplier -= hpExcess * gameData.constants.hp_reliability_penalty_factor;
                 }
             }
-            engineNoteEl.textContent = enginePowerNote;
+            uiElements.engineNoteEl.textContent = enginePowerNote;
         } else {
-            engineNoteEl.textContent = 'Selecione um tipo de motor válido.';
+            uiElements.engineNoteEl.textContent = 'Selecione um tipo de motor válido.';
         }
 
         let fuelData = null; 
@@ -1242,7 +1271,7 @@ function updateCalculations() {
                 speedRoadMultiplier *= fuelData.speed_mod;
                 speedOffroadMultiplier *= fuelData.speed_mod;
             }
-            fuelNoteEl.textContent = fuelData.description;
+            uiElements.fuelNoteEl.textContent = fuelData.description;
         }
 
         let dispositionData = null; 
@@ -1259,7 +1288,7 @@ function updateCalculations() {
             overallReliabilityMultiplier *= (1 - (dispositionData.engine_vulnerability || 0));
             engineDispositionName = dispositionData.name;
             engineDispositionDescription = dispositionData.description;
-            document.getElementById('engine_disposition_note').textContent = dispositionData.description;
+            uiElements.displayEngineDispositionNoteEl.textContent = dispositionData.description;
         }
 
         let transmissionData = null; 
@@ -1285,11 +1314,11 @@ function updateCalculations() {
             overallReliabilityMultiplier *= (1 + (transmissionData.reliability_mod || 0));
             crewComfort += transmissionData.comfort_mod * gameData.constants.crew_comfort_base;
             fuelConsumptionMultiplier *= (1 + (1 - transmissionData.fuel_efficiency_mod));
-            transmissionNoteEl.textContent = transmissionData.description;
+            uiElements.displayTransmissionNoteEl.textContent = transmissionData.description;
             transmissionTypeName = transmissionData.name;
             transmissionDescription = transmissionData.description;
         } else {
-            transmissionNoteEl.textContent = '';
+            uiElements.displayTransmissionNoteEl.textContent = '';
         }
 
         tankDataOutput.engineTypeName = engineTypeName;
@@ -1306,8 +1335,9 @@ function updateCalculations() {
 
     /**
      * Processa a blindagem.
+     * @param {object} uiElements - Referências aos elementos da UI.
      */
-    function processArmor() {
+    function processArmor(uiElements) {
         let armorProductionData = null; 
         let armorProductionTypeName = '-';
         let armorProductionDescription = '';
@@ -1315,11 +1345,11 @@ function updateCalculations() {
             armorProductionData = gameData.components.armor_production_types[armorProductionType];
             armorEffectiveMultiplier *= armorProductionData.effective_armor_factor;
             overallReliabilityMultiplier *= (1 + (armorProductionData.reliability_mod || 0));
-            armorProductionNoteEl.textContent = armorProductionData.description;
+            uiElements.armorProductionNoteEl.textContent = armorProductionData.description;
             armorProductionTypeName = armorProductionData.name;
             armorProductionDescription = armorProductionData.description;
         } else {
-            armorProductionNoteEl.textContent = '';
+            uiElements.armorProductionNoteEl.textContent = '';
         }
 
         const armorRear = gameData.constants.default_armor_rear_mm;
@@ -1397,7 +1427,7 @@ function updateCalculations() {
                 // Aplica aumento de custo para componentes avançados (Blitzkrieg)
                 if (armorData.complex && advancedComponentCostIncrease > 0) {
                     additionalArmorCost *= (1 + advancedComponentCostIncrease);
-                    additionalArmorMetalCost *= (1 + advancedComponentCostIncrease);
+                    additionalArmorMetalCost *= (1 + advancedArmorMetalCost);
                 }
                 // Aplica penalidade de confiabilidade para componentes complexos (Deep Battle)
                 if (armorData.complex && complexComponentReliabilityPenalty > 0) {
@@ -1431,8 +1461,9 @@ function updateCalculations() {
 
     /**
      * Processa armamentos (principal e secundário).
+     * @param {object} uiElements - Referências aos elementos da UI.
      */
-    function processArmaments() {
+    function processArmaments(uiElements) {
         let mainArmamentText = 'N/A';
         let mainGunLengthDescription = '';
 
@@ -1453,7 +1484,7 @@ function updateCalculations() {
             if (gunLengthData) {
                 mainGunCost *= gunLengthData.cost_mod;
                 mainGunWeight *= gunLengthData.weight_mod;
-                mainGunLengthNoteEl.textContent = gunLengthData.description;
+                uiElements.mainGunLengthNoteEl.textContent = gunLengthData.description;
                 mainGunLengthDescription = gunLengthData.name;
                 maneuverabilityMultiplier *= gunLengthData.turret_maneuver_mod;
                 // Aplica aumento de custo para componentes avançados (Blitzkrieg)
@@ -1467,7 +1498,7 @@ function updateCalculations() {
             }
             mainArmamentText = `${mainArmamentCaliber}mm ${gunLengthData ? gunLengthData.name : ''} Canhão`;
         } else {
-            mainGunLengthNoteEl.textContent = 'Insira um calibre de canhão principal válido.';
+            uiElements.mainGunLengthNoteEl.textContent = 'Insira um calibre de canhão principal válido.';
         }
         baseUnitCost += mainGunCost;
         baseMetalCost += mainGunWeight * 0.2;
@@ -1483,7 +1514,7 @@ function updateCalculations() {
             // Aplica aumento de custo para componentes avançados (Blitzkrieg)
             if (reloadMechanismData.complex && advancedComponentCostIncrease > 0) {
                 reloadMechanismComponentCost *= (1 + advancedComponentCostIncrease);
-                reloadMechanismMetalCost *= (1 + advancedComponentCostIncrease);
+                reloadMechanismMetalCost *= (1 + reloadMechanismMetalCost);
             }
             // Aplica penalidade de confiabilidade para componentes complexos (Deep Battle)
             if (reloadMechanismData.complex && complexComponentReliabilityPenalty > 0) {
@@ -1494,18 +1525,18 @@ function updateCalculations() {
             baseMetalCost += reloadMechanismMetalCost;
             totalWeight += reloadMechanismData.weight;
             overallReliabilityMultiplier *= (1 + (reloadMechanismData.reliability_mod || 0));
-            reloadMechanismNoteEl.textContent = reloadMechanismData.description;
+            uiElements.reloadMechanismNoteEl.textContent = reloadMechanismData.description;
             reloadMechanismName = reloadMechanismData.name;
             reloadMechanismDescription = reloadMechanismData.description;
             if (reloadMechanism === 'autoloader') {
-                let currentMaxCrew = parseInt(document.getElementById('num_crewmen').max);
+                let currentMaxCrew = parseInt(uiElements.numCrewmenInput.max);
                 currentMaxCrew = Math.max(2, currentMaxCrew - 1); 
-                document.getElementById('num_crewmen').max = currentMaxCrew;
+                uiElements.numCrewmenInput.max = currentMaxCrew;
                 numCrewmen = Math.min(numCrewmen, currentMaxCrew); 
-                document.getElementById('num_crewmen').value = numCrewmen;
+                uiElements.numCrewmenInput.value = numCrewmen;
             }
         } else {
-            reloadMechanismNoteEl.textContent = '';
+            uiElements.reloadMechanismNoteEl.textContent = '';
         }
 
         let maxAmmoForCaliber = 0;
@@ -1518,9 +1549,9 @@ function updateCalculations() {
         totalAmmoCapacityInput.value = totalAmmoCapacity; 
 
         if (mainArmamentCaliber > 0) {
-            totalAmmoCapacityNoteEl.textContent = `Capacidade máxima para ${mainArmamentCaliber}mm: ${maxAmmoForCaliber} projéteis.`;
+            uiElements.totalAmmoCapacityNoteEl.textContent = `Capacidade máxima para ${mainArmamentCaliber}mm: ${maxAmmoForCaliber} projéteis.`;
         } else {
-            totalAmmoCapacityNoteEl.textContent = 'Selecione um calibre de canhão principal para definir a capacidade máxima de munição.';
+            uiElements.totalAmmoCapacityNoteEl.textContent = 'Selecione um calibre de canhão principal para definir a capacidade máxima de munição.';
         }
 
         let currentTotalAmmoQty = 0;
@@ -1540,14 +1571,14 @@ function updateCalculations() {
         });
 
         if (currentTotalAmmoQty > totalAmmoCapacity) {
-            ammoQtyNoteEl.textContent = `⚠️ A quantidade total de munição (${currentTotalAmmoQty}) excede a capacidade máxima (${totalAmmoCapacity})! Por favor, reduza a quantidade de algum tipo de munição.`;
-            ammoQtyNoteEl.className = 'text-sm status-warning';
+            uiElements.ammoQtyNoteEl.textContent = `⚠️ A quantidade total de munição (${currentTotalAmmoQty}) excede a capacidade máxima (${totalAmmoCapacity})! Por favor, reduza a quantidade de algum tipo de munição.`;
+            uiElements.ammoQtyNoteEl.className = 'text-sm status-warning';
         } else if (mainArmamentCaliber > 0 && totalAmmoCapacity > 0) {
-            ammoQtyNoteEl.textContent = `Munição alocada: ${currentTotalAmmoQty}/${totalAmmoCapacity} projéteis.`;
-            ammoQtyNoteEl.className = 'text-sm status-ok';
+            uiElements.ammoQtyNoteEl.textContent = `Munição alocada: ${currentTotalAmmoQty}/${totalAmmoCapacity} projéteis.`;
+            uiElements.ammoQtyNoteEl.className = 'text-sm status-ok';
         } else {
-            ammoQtyNoteEl.textContent = '';
-            ammoQtyNoteEl.className = '';
+            uiElements.ammoQtyNoteEl.textContent = '';
+            uiElements.ammoQtyNoteEl.className = '';
         }
 
         const selectedAmmoTypes = [];
@@ -1577,7 +1608,7 @@ function updateCalculations() {
                 // Aplica aumento de custo para componentes avançados (Blitzkrieg)
                 if (armamentData.complex && advancedComponentCostIncrease > 0) {
                     armamentComponentCost *= (1 + advancedComponentCostIncrease);
-                    armamentMetalCost *= (1 + advancedComponentCostIncrease);
+                    armamentMetalCost *= (1 + armamentMetalCost);
                 }
                 // Aplica penalidade de confiabilidade para componentes complexos (Deep Battle)
                 if (armamentData.complex && complexComponentReliabilityPenalty > 0) {
@@ -1624,8 +1655,9 @@ function updateCalculations() {
 
     /**
      * Processa equipamentos extras.
+     * @param {object} uiElements - Referências aos elementos da UI.
      */
-    function processExtraEquipment() {
+    function processExtraEquipment(uiElements) {
         const selectedExtraEquipment = [];
         document.querySelectorAll('.form-section:nth-of-type(6) .item-row input[type="checkbox"]:checked').forEach(checkbox => {
             const equipmentId = checkbox.id;
@@ -1637,7 +1669,7 @@ function updateCalculations() {
                 // Aplica aumento de custo para componentes avançados (Blitzkrieg)
                 if (equipmentData.complex && advancedComponentCostIncrease > 0) {
                     equipmentComponentCost *= (1 + advancedComponentCostIncrease);
-                    equipmentMetalCost *= (1 + advancedComponentCostIncrease);
+                    equipmentMetalCost *= (1 + equipmentMetalCost);
                 }
                 // Aplica penalidade de confiabilidade para componentes complexos (Deep Battle)
                 if (equipmentData.complex && complexComponentReliabilityPenalty > 0) {
@@ -1674,8 +1706,9 @@ function updateCalculations() {
 
     /**
      * Processa a tripulação.
+     * @param {object} uiElements - Referências aos elementos da UI.
      */
-    function processCrew() {
+    function processCrew(uiElements) {
         crewComfort -= numCrewmen * gameData.constants.crew_comfort_penalty_per_crewman;
         let crewNoteText = '';
         if (numCrewmen < 3 && vehicleType !== 'tankette' && vehicleType !== 'armored_car') {
@@ -1685,7 +1718,7 @@ function updateCalculations() {
         } else {
             crewNoteText = '';
         }
-        crewNoteEl.textContent = crewNoteText;
+        uiElements.crewNoteEl.textContent = crewNoteText;
         crewComfort = Math.max(0, Math.min(100, crewComfort));
         tankDataOutput.numCrewmen = numCrewmen;
         tankDataOutput.crewNoteText = crewNoteText;
@@ -1693,8 +1726,9 @@ function updateCalculations() {
 
     /**
      * Aplica o modificador do slider de Produção vs. Qualidade.
+     * @param {object} uiElements - Referências aos elementos da UI.
      */
-    function applyProductionQualitySlider() {
+    function applyProductionQualitySlider(uiElements) {
         // Normaliza o valor do slider (0-100) para um range de -0.5 a 0.5, com 0 no centro (50)
         // Adiciona um bias da doutrina (ex: Blitzkrieg +0.10, Deep Battle -0.10)
         let sliderNormalizedValue = ((productionQualitySliderValue - 50) / 100) + doctrineProductionQualitySliderBias;
@@ -1712,25 +1746,26 @@ function updateCalculations() {
 
         // Atualiza a nota do slider
         if (sliderNormalizedValue > 0.1) {
-            productionQualityNoteEl.textContent = `Priorizando Produção: Maior capacidade, menor confiabilidade.`;
-            productionQualityNoteEl.style.color = '#dc3545'; // Vermelho para alerta de qualidade
+            uiElements.productionQualityNoteEl.textContent = `Priorizando Produção: Maior capacidade, menor confiabilidade.`;
+            uiElements.productionQualityNoteEl.style.color = '#dc3545'; // Vermelho para alerta de qualidade
         } else if (sliderNormalizedValue < -0.1) {
-            productionQualityNoteEl.textContent = `Priorizando Qualidade: Maior confiabilidade, menor capacidade.`;
-            productionQualityNoteEl.style.color = '#28a745'; // Verde para bônus de qualidade
+            uiElements.productionQualityNoteEl.textContent = `Priorizando Qualidade: Maior confiabilidade, menor capacidade.`;
+            uiElements.productionQualityNoteEl.style.color = '#28a745'; // Verde para bônus de qualidade
         } else {
-            productionQualityNoteEl.textContent = `Equilíbrio entre confiabilidade e capacidade de produção.`;
-            productionQualityNoteEl.style.color = '#6c757d';
+            uiElements.productionQualityNoteEl.textContent = `Equilíbrio entre confiabilidade e capacidade de produção.`;
+            uiElements.productionQualityNoteEl.style.color = '#6c757d';
         }
     }
 
     /**
      * Calcula as estatísticas finais de performance.
+     * @param {object} uiElements - Referências aos elementos da UI.
      * @param {object} typeData - Dados do tipo de veículo.
      * @param {object} mobilityData - Dados do tipo de mobilidade.
      * @param {object} currentEngineData - Dados do motor.
      * @param {object} transmissionData - Dados da transmissão.
      */
-    function calculateFinalPerformance(typeData, mobilityData, currentEngineData, transmissionData) {
+    function calculateFinalPerformance(uiElements, typeData, mobilityData, currentEngineData, transmissionData) {
         let finalUnitCost = baseUnitCost * doctrineCostModifier * (1 - countryCostReductionFactor);
 
         // Aplica aumento de custo para designs extremos (Combined Arms)
@@ -1821,36 +1856,36 @@ function updateCalculations() {
 
     /**
      * Atualiza a interface do usuário com os resultados calculados.
+     * @param {object} uiElements - Referências aos elementos da UI.
      */
-    function updateUI() {
-        document.getElementById('display_name').textContent = tankDataOutput.vehicleName;
-        document.getElementById('unit_cost').textContent = tankDataOutput.finalUnitCost;
-        document.getElementById('total_production_cost').textContent = tankDataOutput.totalProductionCost;
-        document.getElementById('total_metal_cost').textContent = tankDataOutput.totalMetalCost;
-        document.getElementById('total_weight').textContent = tankDataOutput.totalWeight;
-        document.getElementById('total_power').textContent = tankDataOutput.totalPower;
-        document.getElementById('speed_road').textContent = tankDataOutput.speedRoad;
-        document.getElementById('speed_offroad').textContent = tankDataOutput.speedOffroad;
-        document.getElementById('effective_armor_front_display').textContent = tankDataOutput.effectiveArmorFront;
-        document.getElementById('effective_armor_side_display').textContent = tankDataOutput.effectiveArmorSide;
-        document.getElementById('main_armament').textContent = tankDataOutput.mainArmamentText;
-        document.getElementById('total_cost_label').textContent = `Custo Total (${tankDataOutput.quantity}x):`;
-        document.getElementById('max_range').textContent = tankDataOutput.maxRange;
-        document.getElementById('crew_comfort_display').textContent = tankDataOutput.crewComfort;
-        document.getElementById('reliability_display').textContent = tankDataOutput.reliability;
+    function updateUI(uiElements) {
+        uiElements.displayUnitCostEl.textContent = tankDataOutput.finalUnitCost;
+        uiElements.displayTotalProductionCostEl.textContent = tankDataOutput.totalProductionCost;
+        uiElements.displayTotalMetalCostEl.textContent = tankDataOutput.totalMetalCost;
+        uiElements.totalCostLabelEl.textContent = `Custo Total (${tankDataOutput.quantity}x):`;
 
-        document.getElementById('country_production_capacity').textContent = tankDataOutput.countryProductionCapacity;
+        uiElements.displayTotalWeightEl.textContent = tankDataOutput.totalWeight;
+        uiElements.displayTotalPowerEl.textContent = tankDataOutput.totalPower;
+        uiElements.displaySpeedRoadEl.textContent = tankDataOutput.speedRoad;
+        uiElements.displaySpeedOffroadEl.textContent = tankDataOutput.speedOffroad;
+        uiElements.displayEffectiveArmorFrontEl.textContent = tankDataOutput.effectiveArmorFront;
+        uiElements.displayEffectiveArmorSideEl.textContent = tankDataOutput.effectiveArmorSide;
+        uiElements.displayMainArmamentEl.textContent = tankDataOutput.mainArmamentText;
+        uiElements.displayMaxRangeEl.textContent = tankDataOutput.maxRange;
+        uiElements.displayCrewComfortEl.textContent = tankDataOutput.crewComfort;
+        uiElements.displayReliabilityEl.textContent = tankDataOutput.reliability;
+
+        uiElements.displayCountryProductionCapacityEl.textContent = tankDataOutput.countryProductionCapacity;
         
         let producibleUnits = 'N/A';
-        // Recalcula producibleUnits com a capacidade de produção modificada pelo slider
         const currentFinalUnitCost = parseFloat(tankDataOutput.finalUnitCost.replace(/\./g, '').replace(',', '.'));
         if (currentFinalUnitCost > 0) {
             producibleUnits = Math.floor(countryProductionCapacity / currentFinalUnitCost).toLocaleString('pt-BR');
         }
-        document.getElementById('producible_units').textContent = producibleUnits;
-        tankDataOutput.producibleUnits = producibleUnits; // Atualiza no objeto de saída
+        uiElements.displayProducibleUnitsEl.textContent = producibleUnits;
+        tankDataOutput.producibleUnits = producibleUnits;
 
-        document.getElementById('country_metal_balance').textContent = tankDataOutput.countryMetalBalance;
+        uiElements.displayCountryMetalBalanceEl.textContent = tankDataOutput.countryMetalBalance;
         
         let metalBalanceStatusText = '';
         let metalBalanceStatusClass = '';
@@ -1867,8 +1902,8 @@ function updateCalculations() {
             metalBalanceStatusText = '';
             metalBalanceStatusClass = '';
         }
-        metalBalanceStatusEl.textContent = metalBalanceStatusText;
-        metalBalanceStatusEl.className = metalBalanceStatusClass;
+        uiElements.metalBalanceStatusEl.textContent = metalBalanceStatusText;
+        uiElements.metalBalanceStatusEl.className = metalBalanceStatusClass;
         tankDataOutput.metalBalanceStatusText = metalBalanceStatusText;
         tankDataOutput.metalBalanceStatusClass = metalBalanceStatusClass;
 
@@ -1915,23 +1950,23 @@ function updateCalculations() {
                 statusClass = "status-ok";
             }
         }
-        statusEl.textContent = statusMessage;
-        statusEl.className = `status-indicator ${statusClass}`;
+        uiElements.statusEl.textContent = statusMessage;
+        uiElements.statusEl.className = `status-indicator ${statusClass}`;
         tankDataOutput.statusMessage = statusMessage;
         tankDataOutput.statusClass = statusClass;
     }
 
     // --- Fluxo Principal de Cálculos ---
-    processBasicInfoAndDoctrine();
-    const { typeData, mobilityData } = processChassisAndMobility();
-    const { currentEngineData, transmissionData } = processEngineAndPropulsion({}); // Passa um objeto vazio para ser preenchido
-    processArmor();
-    processArmaments();
-    processExtraEquipment();
-    processCrew();
-    applyProductionQualitySlider(); // Aplica o slider APÓS todos os outros cálculos de confiabilidade e capacidade
-    calculateFinalPerformance(typeData, mobilityData, currentEngineData, transmissionData);
-    updateUI();
+    processBasicInfoAndDoctrine(uiElements);
+    const { typeData, mobilityData } = processChassisAndMobility(uiElements);
+    const { currentEngineData, transmissionData } = processEngineAndPropulsion(uiElements, {}); // Passa um objeto vazio para ser preenchido
+    processArmor(uiElements);
+    processArmaments(uiElements);
+    processExtraEquipment(uiElements);
+    processCrew(uiElements);
+    applyProductionQualitySlider(uiElements); // Aplica o slider APÓS todos os outros cálculos de confiabilidade e capacidade
+    calculateFinalPerformance(uiElements, typeData, mobilityData, currentEngineData, transmissionData);
+    updateUI(uiElements);
 
     return tankDataOutput;
 }
