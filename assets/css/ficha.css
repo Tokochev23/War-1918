@@ -67,13 +67,18 @@ body {
 }
 
 .ficha-image-section {
-    text-align: center;
+    text-align: center; /* Mantém para alinhamento de texto geral */
     margin-bottom: 20px;
     background: #f8f9fa;
     padding: 20px;
     border-radius: 10px;
     border: 1px solid #e0e0e0;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    
+    /* Adicionado para centralizar o conteúdo flexível */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza horizontalmente os itens filhos */
 }
 
 .ficha-tank-image {
@@ -90,6 +95,8 @@ body {
     flex-direction: column;
     gap: 10px;
     margin-top: 15px;
+    width: 100%; /* Garante que os controles ocupem a largura total dentro da seção */
+    max-width: 400px; /* Limita a largura máxima dos controles para melhor estética */
 }
 
 .file-upload-wrapper {
