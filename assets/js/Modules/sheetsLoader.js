@@ -1,8 +1,8 @@
-// js/modules/sheetsLoader.js
+// js/Modules/sheetsLoader.js
 
-import { COUNTRY_STATS_URL, METAIS_URL, VEICULOS_URL, REAL_WORLD_TANKS, GAME_CONSTANTS } from './constants.js';
-import { cleanAndParseFloat, calculateNumericalRanges } from './utils.js';
-import { populateCountryDropdown } from './uiUpdater.js'; // Importa populateCountryDropdown para uso interno
+import { COUNTRY_STATS_URL, METAIS_URL, VEICULOS_URL, REAL_WORLD_TANKS, GAME_CONSTANTS } from './constants.js'; // Caminho corrigido
+import { cleanAndParseFloat, calculateNumericalRanges } from './utils.js'; // Caminho corrigido
+import { populateCountryDropdown } from './uiUpdater.js'; // Caminho corrigido
 
 // Função para parsear CSV e retornar um array de objetos
 async function parseCSV(url) {
