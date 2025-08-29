@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Criador de Blindados</title>
+
+  <!-- Fontes -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Stardos+Stencil:wght@700&display=swap" rel="stylesheet">
+
+  <!-- Estilos -->
   <link rel="stylesheet" href="main.css">
 </head>
 <body>
+  <!-- Banner/insígnia de época -->
   <div class="era-banner">
     <span class="era-tape"></span>
     <span class="era-text">Guerra Fria · 1954–1991</span>
@@ -20,18 +25,24 @@
         <h1>Criador de Blindados</h1>
         <p>Monte um MBT coerente com a doutrina, a indústria e a economia do seu país.</p>
       </div>
+      <div class="inline" aria-hidden="true">
+        <span class="pill ok">Materiais ok</span>
+        <span class="pill warn">Custo alto</span>
+      </div>
     </div>
 
     <div class="grid">
       <section class="form-section">
         <h3>Configurações básicas</h3>
+
         <div class="row">
           <div>
-            <label>Nome do MBT</label>
-            <input type="text" id="tank_name" placeholder="Ex.: M-62 Carcará" />
+            <label for="tank_name">Nome do MBT</label>
+            <input type="text" id="tank_name" placeholder="Ex.: M-62 Carcará">
           </div>
+
           <div>
-            <label>Doutrina</label>
+            <label for="tank_doctrine">Doutrina</label>
             <select id="tank_doctrine">
               <option value="qualitative_doctrine">Qualitativa (OTAN)</option>
               <option value="quantitative_doctrine">Quantitativa (Pacto de Varsóvia)</option>
@@ -42,40 +53,55 @@
 
         <div class="row3">
           <div>
-            <label>Peso (t)</label>
-            <input type="number" id="tank_weight" placeholder="50" />
+            <label for="tank_weight">Peso (t)</label>
+            <input type="number" id="tank_weight" placeholder="50">
           </div>
           <div>
-            <label>Blindagem frontal (mm)</label>
-            <input type="number" id="tank_armor" placeholder="180" />
+            <label for="tank_armor">Blindagem frontal (mm)</label>
+            <input type="number" id="tank_armor" placeholder="180">
           </div>
           <div>
-            <label>Motor (hp)</label>
-            <input type="number" id="tank_engine" placeholder="850" />
+            <label for="tank_engine">Motor (hp)</label>
+            <input type="number" id="tank_engine" placeholder="850">
           </div>
         </div>
       </section>
 
       <aside class="summary-panel">
         <h3>Resumo</h3>
-        <div id="summary"></div>
+        <div class="summary-item"><span>Custo estimado</span><span id="sum_cost">$ —</span></div>
+        <div class="summary-item"><span>Tripulação</span><span id="sum_crew">—</span></div>
+        <div class="summary-item"><span>Autonomia</span><span id="sum_range">—</span></div>
+        <div class="summary-item total"><span>Índice de qualidade</span><span id="sum_quality">—</span></div>
+
+        <div class="status">
+          <span class="pill ok">Força industrial</span>
+          <span class="pill warn">Importação de aço</span>
+          <span class="pill err">Óptica escassa</span>
+        </div>
       </aside>
     </div>
 
     <section class="form-section" style="margin-top:16px">
       <h3>Produção × Qualidade</h3>
-      <input id="production_quality_slider" type="range" min="0" max="100" value="60" style="width:100%" />
-      <div id="production_quality_note" class="muted"></div>
-      <div class="blueprint-section">
-        <canvas id="tankBlueprint"></canvas>
+      <label class="muted" for="production_quality_slider">Distribuição de foco</label>
+      <input id="production_quality_slider" type="range" min="0" max="100" value="60" />
+      <div id="production_quality_note" class="muted" style="margin-top:6px"></div>
+
+      <div class="blueprint-section" style="margin-top:12px">
+        <div class="mock">╳ BLUEPRINT PREVIEW ╳</div>
+        <!-- Coloque seu canvas/img aqui se quiser -->
+        <!-- <canvas id="tankBlueprint" width="760" height="220"></canvas> -->
       </div>
+
       <div class="buttons">
-        <button class="btn save-button">Salvar Protótipo</button>
-        <button class="btn back-button">Gerar Ficha</button>
+        <button class="btn save-button" type="button">Salvar Protótipo</button>
+        <button class="btn back-button" type="button" onclick="window.location.href='ficha.html'">Gerar Ficha</button>
       </div>
     </section>
   </div>
 
+  <!-- Scripts -->
   <script src="main.js"></script>
 </body>
 </html>
