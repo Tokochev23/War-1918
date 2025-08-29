@@ -56,7 +56,7 @@ const gameData = {
             main_battle_tank: { name: "Carro de Combate Principal", cost: 1200000, weight: 45000, metal_cost: 20000, base_speed_road: 60, base_speed_offroad: 40, base_armor: 150, max_crew: 4, frontal_area_m2: 3.5, drag_coefficient: 0.8 },
             infantry_fighting_vehicle: { name: "Veículo de Combate de Infantaria", cost: 850000, weight: 25000, metal_cost: 12000, base_speed_road: 70, base_speed_offroad: 50, base_armor: 80, max_crew: 3, frontal_area_m2: 2.8, drag_coefficient: 0.85 },
             armored_personnel_carrier: { name: "Veículo de Transporte de Pessoal", cost: 600000, weight: 15000, metal_cost: 8000, base_speed_road: 80, base_speed_offroad: 55, base_armor: 50, max_crew: 2, frontal_area_m2: 2.5, drag_coefficient: 0.9 },
-            tank_destroyer: { name: "Caça-Tanques", cost: 900000, weight: 30000, metal_cost: 15000, base_speed_road: 75, base_speed_offroad: 50, base_armor: 100, max_crew: 4, frontal_area_m2: 3.0, drag_coefficient: 0.8 },
+            tank_destroyer: { name: "Caça-Tanques", cost: 900000, weight: 30000, metal_cost: 15000, base_speed_road: 75, base_speed_offroad: 50, base_armor: 100, max_crew: 3, frontal_area_m2: 3.0, drag_coefficient: 0.8 },
             self_propelled_artillery: { name: "Artilharia Autopropulsada", cost: 1100000, weight: 40000, metal_cost: 18000, base_speed_road: 60, base_speed_offroad: 35, base_armor: 70, max_crew: 5, frontal_area_m2: 3.8, drag_coefficient: 0.95 },
             self_propelled_anti_aircraft: { name: "AA Autopropulsada", cost: 950000, weight: 30000, metal_cost: 14000, base_speed_road: 70, base_speed_offroad: 45, base_armor: 60, max_crew: 3, frontal_area_m2: 3.0, drag_coefficient: 0.85 },
             armored_car: { name: "Carro Blindado", cost: 750000, weight: 10000, metal_cost: 6000, base_speed_road: 95, base_speed_offroad: 60, base_armor: 40, max_crew: 3, frontal_area_m2: 2.2, drag_coefficient: 0.75 },
@@ -337,10 +337,6 @@ async function loadGameDataFromSheets() {
                     tech_level_vehicles: 0,
                     metal_balance: 0
                 };
-                console.log(`Raw data for ${countryName} from General tab: Tec='${row['Tec']}', Urbanização='${row['Urbanização']}'`);
-                console.log(`Parsed data for ${countryName}: tech_civil=${tempCountries[countryName].tech_civil}, urbanization=${tempCountries[countryName].urbanization}`);
-            } else {
-                console.warn(`Linha ignorada na aba Geral por falta de nome de país:`, row);
             }
         });
 
@@ -349,10 +345,6 @@ async function loadGameDataFromSheets() {
             if (countryName && tempCountries[countryName]) { 
                 tempCountries[countryName].production_capacity = cleanAndParseFloat(row['Capacidade de produção']);
                 tempCountries[countryName].tech_level_vehicles = cleanAndParseFloat(row['Nível Veiculos']);
-                console.log(`Raw data for ${countryName} from Veiculos tab: Capacidade de produção='${row['Capacidade de produção']}', Nível Veiculos='${row['Nível Veiculos']}'`);
-                console.log(`Parsed data for ${countryName}: production_capacity=${tempCountries[countryName].production_capacity}, tech_level_vehicles=${tempCountries[countryName].tech_level_vehicles}`);
-            } else if (countryName) {
-                console.warn(`País "${countryName}" da aba Veiculos não encontrado na base de países (aba Geral) para mesclagem. Linha:`, row);
             }
         });
 
@@ -360,8 +352,6 @@ async function loadGameDataFromSheets() {
             const countryName = row['País'] ? row['País'].trim() : ''; 
             if (countryName && tempCountries[countryName]) { 
                 tempCountries[countryName].metal_balance = cleanAndParseFloat(row['Saldo']); 
-            } else if (countryName) {
-                console.warn(`País "${countryName}" da aba Metais não encontrado na base de países (aba Geral) para mesclagem. Linha:`, row);
             }
         });
         
@@ -373,8 +363,6 @@ async function loadGameDataFromSheets() {
         tempCountries["Genérico / Padrão"].urbanization = tempCountries["Genérico / Padrão"].urbanization || 50;
 
         gameData.countries = tempCountries;
-        console.log("Objeto gameData.countries final:", gameData.countries);
-
         populateCountryDropdown();
         countryDropdown.disabled = false;
         updateCalculations(); 
@@ -387,8 +375,11 @@ async function loadGameDataFromSheets() {
         populateCountryDropdown();
         countryDropdown.disabled = false;
         updateCalculations();
-        document.getElementById('status').textContent = `Erro ao carregar dados externos: ${error.message}. Por favor, verifique os URLs das planilhas e se estão 'Publicadas na web' como CSV.`;
-        document.getElementById('status').className = "status-indicator status-error";
+        const statusEl = document.getElementById('status');
+        if (statusEl) {
+            statusEl.textContent = `Erro ao carregar dados externos. Por favor, verifique os URLs das planilhas e se estão 'Publicadas na web' como CSV.`;
+            statusEl.className = "pill err";
+        }
     }
 }
 
@@ -406,15 +397,6 @@ function populateCountryDropdown() {
     if (gameData.countries["Genérico / Padrão"]) {
         dropdown.value = "Genérico / Padrão";
     }
-}
-
-// Obtém o texto da opção selecionada em um dropdown
-function getSelectedText(elementId) {
-    const selectEl = document.getElementById(elementId);
-    if (selectEl && selectEl.selectedIndex >= 0) {
-        return selectEl.options[selectEl.selectedIndex].text;
-    }
-    return 'N/A';
 }
 
 // Calcula a blindagem efetiva com base na espessura e ângulo
@@ -531,7 +513,6 @@ function calculateNumericalRanges() {
         });
         numericalAttributeRanges[attr] = { min: minVal, max: maxVal, range: maxVal - minVal };
     });
-    console.log("Ranges numéricos calculados:", numericalAttributeRanges);
 }
 
 function calculateGowerDistance(tank1, tank2, weights, ranges) {
@@ -637,8 +618,6 @@ function findBestMatchingTank(playerTank) {
             bestMatch = realTank;
         }
     }
-    console.log("Melhor correspondência encontrada:", bestMatch ? bestMatch.name : "Nenhum");
-    console.log("Distância de Gower mínima:", minGowerDistance);
     return bestMatch;
 }
 
@@ -715,7 +694,7 @@ function updateCalculations() {
         totalAmmoCapacityNoteEl: document.getElementById('total_ammo_capacity_note'),
         ammoQtyNoteEl: document.getElementById('ammo_qty_note'),
         crewNoteEl: document.getElementById('crew_note'),
-        metalBalanceStatusEl: document.getElementById('metal_balance_status'),
+        statusPillsEl: document.getElementById('status_pills'),
         statusEl: document.getElementById('status'),
         productionQualityNoteEl: document.getElementById('production_quality_note'),
         displayTypeEl: document.getElementById('display_type'),
@@ -740,7 +719,8 @@ function updateCalculations() {
         displayCountryProductionCapacityEl: document.getElementById('country_production_capacity'),
         displayProducibleUnitsEl: document.getElementById('producible_units'),
         displayCountryMetalBalanceEl: document.getElementById('country_metal_balance'),
-        totalCostLabelEl: document.getElementById('total_cost_label')
+        totalCostLabelEl: document.getElementById('total_cost_label'),
+        displayNameEl: document.getElementById('display_name')
     };
 
     let tankDataOutput = {};
@@ -816,8 +796,8 @@ function updateCalculations() {
         let typeData = null;
         let vehicleTypeName = '-';
 
-        if (vehicleType && gameData.components.vehicle_types[vehicleType.split('(')[0].trim()]) {
-            typeData = gameData.components.vehicle_types[vehicleType.split('(')[0].trim()];
+        if (vehicleType && gameData.components.vehicle_types[vehicleType]) {
+            typeData = gameData.components.vehicle_types[vehicleType];
             baseUnitCost += typeData.cost;
             baseMetalCost += typeData.metal_cost || 0;
             totalWeight += typeData.weight;
@@ -825,6 +805,7 @@ function updateCalculations() {
             vehicleTypeName = typeData.name;
             uiElements.displayTypeEl.textContent = typeData.name;
             uiElements.displayDoctrineEl.textContent = doctrineName;
+            uiElements.displayNameEl.textContent = vehicleName;
         } else {
             uiElements.displayTypeEl.textContent = '-';
             uiElements.displayDoctrineEl.textContent = '-';
@@ -1078,7 +1059,7 @@ function updateCalculations() {
         let general_armor_effective_bonus = 0;
         const selectedAdditionalArmor = [];
 
-        document.querySelectorAll('.form-section:nth-of-type(4) .item-row input[type="checkbox"]:checked').forEach(checkbox => {
+        document.querySelectorAll('.form-section .item-row input[type="checkbox"]:checked').forEach(checkbox => {
             const armorId = checkbox.id;
             const armorData = gameData.components.armor_materials_and_additions[armorId]; 
             if (armorData) {
@@ -1087,7 +1068,7 @@ function updateCalculations() {
 
                 if (armorData.complex && advancedComponentCostIncrease > 0) {
                     additionalArmorCost *= (1 + advancedComponentCostIncrease);
-                    additionalArmorMetalCost *= (1 + advancedComponentCostIncrease);
+                    additionalArmorMetalCost *= (1 + additionalArmorMetalCost);
                 }
                 if (armorData.complex && complexComponentReliabilityPenalty > 0) {
                     overallReliabilityMultiplier *= (1 - complexComponentReliabilityPenalty);
@@ -1148,7 +1129,7 @@ function updateCalculations() {
                 }
             }
         } else {
-            uiElements.mainGunLengthNoteEl.textContent = 'Insira um calibre de canhão principal válido.';
+            mainArmamentText = 'N/A';
         }
         baseUnitCost += mainGunCost;
         baseMetalCost += mainGunWeight * 0.2;
@@ -1191,16 +1172,19 @@ function updateCalculations() {
         if (mainArmamentCaliber > 0) {
             maxAmmoForCaliber = Math.max(15, Math.round(15000 / mainArmamentCaliber));
         }
-        totalAmmoCapacityInput.max = maxAmmoForCaliber;
-        let totalAmmoCapacity = parseInt(totalAmmoCapacityInput.value) || 0;
-        totalAmmoCapacity = Math.min(totalAmmoCapacity, maxAmmoForCaliber); 
-        totalAmmoCapacityInput.value = totalAmmoCapacity; 
-
-        if (mainArmamentCaliber > 0) {
-            uiElements.totalAmmoCapacityNoteEl.textContent = `Capacidade máxima para ${mainArmamentCaliber}mm: ${maxAmmoForCaliber} projéteis.`;
-        } else {
+        if (totalAmmoCapacityInput) {
+             totalAmmoCapacityInput.max = maxAmmoForCaliber;
+             let totalAmmoCapacity = parseInt(totalAmmoCapacityInput.value) || 0;
+             totalAmmoCapacity = Math.min(totalAmmoCapacity, maxAmmoForCaliber); 
+             totalAmmoCapacityInput.value = totalAmmoCapacity; 
+             if (uiElements.totalAmmoCapacityNoteEl) {
+                uiElements.totalAmmoCapacityNoteEl.textContent = `Capacidade máxima para ${mainArmamentCaliber}mm: ${maxAmmoForCaliber} projéteis.`;
+             }
+        }
+        if (mainArmamentCaliber <= 0 && uiElements.totalAmmoCapacityNoteEl) {
             uiElements.totalAmmoCapacityNoteEl.textContent = 'Selecione um calibre de canhão principal para definir a capacidade máxima de munição.';
         }
+
 
         let currentTotalAmmoQty = 0;
         const ammoQuantities = {};
@@ -1208,27 +1192,31 @@ function updateCalculations() {
         ['apfsds', 'heat', 'he', 'atgm'].forEach(ammoType => {
             const checkbox = document.getElementById(`ammo_${ammoType}_checkbox`);
             const qtyInput = document.getElementById(`ammo_${ammoType}_qty`);
-            let qty = parseInt(qtyInput ? qtyInput.value : 0) || 0;
-
-            if (checkbox.checked) {
+            let qty = (checkbox && checkbox.checked) ? (parseInt(qtyInput ? qtyInput.value : 1) || 0) : 0;
+            if (qty > 0) {
                 ammoQuantities[ammoType] = qty;
                 currentTotalAmmoQty += qty;
                 selectedAmmoTypes.push(`${gameData.components.ammo_types[ammoType].name} (${qty})`);
-            } else {
+            } else if(qtyInput) {
                 qtyInput.value = 0;
-                ammoQuantities[ammoType] = 0;
             }
         });
 
-        if (currentTotalAmmoQty > totalAmmoCapacity) {
-            uiElements.ammoQtyNoteEl.textContent = `⚠️ A quantidade total de munição (${currentTotalAmmoQty}) excede a capacidade máxima (${totalAmmoCapacity})! Por favor, reduza a quantidade de algum tipo de munição.`;
-            uiElements.ammoQtyNoteEl.className = 'text-sm status-warning';
-        } else if (mainArmamentCaliber > 0 && totalAmmoCapacity > 0) {
-            uiElements.ammoQtyNoteEl.textContent = `Munição alocada: ${currentTotalAmmoQty}/${totalAmmoCapacity} projéteis.`;
-            uiElements.ammoQtyNoteEl.className = 'text-sm status-ok';
+        if (currentTotalAmmoQty > totalAmmoCapacityInput.value) {
+            if (uiElements.ammoQtyNoteEl) {
+                uiElements.ammoQtyNoteEl.textContent = `⚠️ A quantidade total de munição (${currentTotalAmmoQty}) excede a capacidade máxima (${totalAmmoCapacityInput.value})! Por favor, reduza a quantidade de algum tipo de munição.`;
+                uiElements.ammoQtyNoteEl.className = 'muted warn';
+            }
+        } else if (mainArmamentCaliber > 0 && totalAmmoCapacityInput.value > 0) {
+            if (uiElements.ammoQtyNoteEl) {
+                uiElements.ammoQtyNoteEl.textContent = `Munição alocada: ${currentTotalAmmoQty}/${totalAmmoCapacityInput.value} projéteis.`;
+                uiElements.ammoQtyNoteEl.className = 'muted ok';
+            }
         } else {
-            uiElements.ammoQtyNoteEl.textContent = '';
-            uiElements.ammoQtyNoteEl.className = '';
+            if (uiElements.ammoQtyNoteEl) {
+                uiElements.ammoQtyNoteEl.textContent = '';
+                uiElements.ammoQtyNoteEl.className = '';
+            }
         }
 
         ['apfsds', 'heat', 'he', 'atgm'].forEach(ammoType => {
@@ -1243,7 +1231,7 @@ function updateCalculations() {
 
         const selectedSecondaryArmaments = [];
         let secondaryArmamentCount = 0; 
-        document.querySelectorAll('.form-section:nth-of-type(5) .item-row input[type="checkbox"]').forEach(checkbox => {
+        document.querySelectorAll('.form-section .item-row input[type="checkbox"]').forEach(checkbox => {
             const armamentId = checkbox.id.replace('_checkbox', ''); 
             const qtyInput = document.getElementById(armamentId + '_qty');
             const qty = checkbox.checked ? (parseInt(qtyInput ? qtyInput.value : 1) || 0) : 0;
@@ -1274,7 +1262,7 @@ function updateCalculations() {
         tankDataOutput.mainGunLengthDescription = gunType;
         tankDataOutput.reloadMechanismName = reloadMechanismName;
         tankDataOutput.reloadMechanismDescription = reloadMechanismDescription;
-        tankDataOutput.totalAmmoCapacity = totalAmmoCapacity;
+        tankDataOutput.totalAmmoCapacity = totalAmmoCapacityInput ? parseInt(totalAmmoCapacityInput.value) : 0;
         tankDataOutput.currentTotalAmmoQty = currentTotalAmmoQty;
         tankDataOutput.selectedAmmoTypes = selectedAmmoTypes;
         tankDataOutput.selectedSecondaryArmaments = selectedSecondaryArmaments;
@@ -1282,7 +1270,7 @@ function updateCalculations() {
 
     function processExtraEquipment(uiElements) {
         const selectedExtraEquipment = [];
-        document.querySelectorAll('.form-section:nth-of-type(6) .item-row input[type="checkbox"]:checked').forEach(checkbox => {
+        document.querySelectorAll('.form-section .item-row input[type="checkbox"]:checked').forEach(checkbox => {
             const equipmentId = checkbox.id;
             if (gameData.components.equipment[equipmentId]) { 
                 const equipmentData = gameData.components.equipment[equipmentId];
@@ -1315,7 +1303,7 @@ function updateCalculations() {
     function processCrew(uiElements) {
         crewComfort -= numCrewmen * gameData.constants.crew_comfort_penalty_per_crewman;
         let crewNoteText = '';
-        if (numCrewmen < 3 && vehicleType !== 'tankette' && vehicleType !== 'armored_car') {
+        if (numCrewmen < 3 && vehicleType !== 'light_armored_vehicle' && vehicleType !== 'armored_car' && vehicleType !== 'infantry_fighting_vehicle') {
             crewNoteText = 'Tripulação muito pequena para um veículo deste tipo. Isso impactará o desempenho!';
             crewComfort *= 0.7;
             overallReliabilityMultiplier *= 0.8;
@@ -1337,13 +1325,13 @@ function updateCalculations() {
 
         if (sliderNormalizedValue > 0.1) {
             uiElements.productionQualityNoteEl.textContent = `Priorizando Produção: Maior capacidade, menor confiabilidade.`;
-            uiElements.productionQualityNoteEl.style.color = '#dc3545'; 
+            uiElements.productionQualityNoteEl.style.color = 'var(--accent-warsaw)'; 
         } else if (sliderNormalizedValue < -0.1) {
             uiElements.productionQualityNoteEl.textContent = `Priorizando Qualidade: Maior confiabilidade, menor capacidade.`;
-            uiElements.productionQualityNoteEl.style.color = '#28a745'; 
+            uiElements.productionQualityNoteEl.style.color = 'var(--accent)'; 
         } else {
             uiElements.productionQualityNoteEl.textContent = `Equilíbrio entre confiabilidade e capacidade de produção.`;
-            uiElements.productionQualityNoteEl.style.color = '#6c757d';
+            uiElements.productionQualityNoteEl.style.color = 'var(--muted)';
         }
     }
 
@@ -1362,19 +1350,19 @@ function updateCalculations() {
                 maxRpm: engineDataForCalc.max_rpm || 3000 
             },
             transmission: {
-                efficiency: transmissionDataForCalc.efficiency || 0.85, 
+                efficiency: transmissionDataForCalc.efficiency || 0.88, 
                 gearRatios: transmissionDataForCalc.gear_ratios || [1.0], 
                 finalDriveRatio: transmissionDataForCalc.final_drive_ratio || 8.5, 
                 max_speed_road_limit: transmissionDataForCalc.max_speed_road_limit || Infinity,
                 max_speed_offroad_limit: transmissionDataForCalc.max_speed_offroad_limit || Infinity
             },
             chassis: {
-                driveSprocketRadiusM: currentMobilityData.drive_sprocket_radius_m || 0.4, 
-                frontalAreaM2: currentTypeData.frontal_area_m2 || 3.0, 
-                dragCoefficient: currentTypeData.drag_coefficient || 1.0 
+                driveSprocketRadiusM: currentMobilityData.drive_sprocket_radius_m || 0.45, 
+                frontalAreaM2: currentTypeData.frontal_area_m2 || 3.5, 
+                dragCoefficient: currentTypeData.drag_coefficient || 0.8 
             },
             environment: {
-                rollingResistanceCoeff: currentMobilityData.rolling_resistance_coeff_road || 0.02, 
+                rollingResistanceCoeff: currentMobilityData.rolling_resistance_coeff_road || 0.015, 
                 slopeDegrees: 0,
                 airDensity: 1.225 
             }
@@ -1383,14 +1371,14 @@ function updateCalculations() {
         const roadPerformance = calculateTankPerformance(tankStats);
         let finalSpeedRoad = roadPerformance.topSpeedKmh;
 
-        tankStats.environment.rollingResistanceCoeff = currentMobilityData.rolling_resistance_coeff_offroad || 0.10; 
+        tankStats.environment.rollingResistanceCoeff = currentMobilityData.rolling_resistance_coeff_offroad || 0.08; 
         const offRoadPerformance = calculateTankPerformance(tankStats);
         let finalSpeedOffroad = offRoadPerformance.topSpeedKmh;
         
         let finalReliability = Math.max(0.05, Math.min(1, totalReliability * overallReliabilityMultiplier)); 
 
         let totalFuelCapacity = gameData.constants.base_fuel_capacity_liters;
-        if (document.getElementById('extra_fuel').checked) {
+        if (document.getElementById('extra_fuel')?.checked) {
             totalFuelCapacity += gameData.constants.fuel_capacity_per_extra_tank;
         }
 
@@ -1419,101 +1407,75 @@ function updateCalculations() {
     }
 
     function updateUI(uiElements) {
-        uiElements.displayUnitCostEl.textContent = tankDataOutput.finalUnitCost;
-        uiElements.displayTotalProductionCostEl.textContent = tankDataOutput.totalProductionCost;
-        uiElements.displayTotalMetalCostEl.textContent = tankDataOutput.totalMetalCost;
-        uiElements.totalCostLabelEl.textContent = `Custo Total (${tankDataOutput.quantity}x):`;
+        uiElements.displayNameEl.textContent = tankDataOutput.vehicleName;
+        uiElements.displayTypeEl.textContent = tankDataOutput.vehicleTypeName;
+        uiElements.displayDoctrineEl.textContent = tankDataOutput.doctrineName;
 
+        uiElements.displayUnitCostEl.textContent = tankDataOutput.finalUnitCost;
         uiElements.displayTotalWeightEl.textContent = tankDataOutput.totalWeight;
         uiElements.displayTotalPowerEl.textContent = tankDataOutput.totalPower;
         uiElements.displaySpeedRoadEl.textContent = tankDataOutput.speedRoad;
-        uiElements.displaySpeedOffroadEl.textContent = tankDataOutput.speedOffroad;
         uiElements.displayEffectiveArmorFrontEl.textContent = tankDataOutput.effectiveArmorFront;
-        uiElements.displayEffectiveArmorSideEl.textContent = tankDataOutput.effectiveArmorSide;
         uiElements.displayMainArmamentEl.textContent = tankDataOutput.mainArmamentText;
-        uiElements.displayMaxRangeEl.textContent = tankDataOutput.maxRange;
-        uiElements.displayCrewComfortEl.textContent = tankDataOutput.crewComfort;
         uiElements.displayReliabilityEl.textContent = tankDataOutput.reliability;
-
-        uiElements.displayCountryProductionCapacityEl.textContent = tankDataOutput.countryProductionCapacity;
+        uiElements.displayCrewComfortEl.textContent = tankDataOutput.crewComfort;
         
-        let producibleUnits = 'N/A';
-        const currentFinalUnitCost = parseFloat(tankDataOutput.finalUnitCost.replace(/\./g, '').replace(',', '.'));
-        if (currentFinalUnitCost > 0) {
-            producibleUnits = Math.floor(countryProductionCapacity / currentFinalUnitCost).toLocaleString('pt-BR');
-        }
-        uiElements.displayProducibleUnitsEl.textContent = producibleUnits;
-        tankDataOutput.producibleUnits = producibleUnits;
-
-        uiElements.displayCountryMetalBalanceEl.textContent = tankDataOutput.countryMetalBalance;
-        
-        let metalBalanceStatusText = '';
-        let metalBalanceStatusClass = '';
-        const currentTotalMetalCost = parseFloat(tankDataOutput.totalMetalCost.replace(/\./g, '').replace(',', '.'));
-        if (currentTotalMetalCost > 0) {
-            if (currentTotalMetalCost > countryMetalBalance) { 
-                metalBalanceStatusText = '⚠️ Saldo de metais insuficiente para esta produção!';
-                metalBalanceStatusClass = 'status-warning'; 
-            } else {
-                metalBalanceStatusText = '✅ Saldo de metais suficiente.';
-                metalBalanceStatusClass = 'status-ok'; 
-            }
-        } else {
-            metalBalanceStatusText = '';
-            metalBalanceStatusClass = '';
-        }
-        uiElements.metalBalanceStatusEl.textContent = metalBalanceStatusText;
-        uiElements.metalBalanceStatusEl.className = metalBalanceStatusClass;
-        tankDataOutput.metalBalanceStatusText = metalBalanceStatusText;
-        tankDataOutput.metalBalanceStatusClass = metalBalanceStatusClass;
-
         let statusMessage = "Selecione o tipo de veículo e motor para começar";
-        let statusClass = "status-warning";
-
-        const currentSpeedRoad = parseFloat(tankDataOutput.speedRoad.replace(' km/h', '').replace(/\./g, '').replace(',', '.'));
-        const currentTotalPower = parseFloat(tankDataOutput.totalPower.replace(' hp', '').replace(/\./g, '').replace(',', '.'));
-        const currentEffectiveArmorFront = parseFloat(tankDataOutput.effectiveArmorFront.replace(' mm', '').replace(/\./g, '').replace(',', '.'));
-        const currentCrewComfort = parseFloat(tankDataOutput.crewComfort.replace('%', '').replace(',', '.'));
-        const currentReliability = parseFloat(tankDataOutput.reliability.replace('%', '').replace(',', '.')) / 100;
-
-
-        if (vehicleType && engineType && currentTotalPower > 0) {
+        let statusClass = "warn";
+        if (vehicleType && engineType && totalPower > 0) {
             const P_TO_W_THRESHOLD_GOOD = 20; 
-            const P_TO_W_THRESHOLD_OK = 15;    
-
-            const roadPerformance = calculateTankPerformance({
-                weightTonnes: parseFloat(tankDataOutput.totalWeight.replace(' kg', '').replace(/\./g, '').replace(',', '.')) / 1000,
-                engine: { powerHp: currentTotalPower, maxRpm: gameData.components.engines[engineType].max_rpm || 3000 },
-                transmission: { efficiency: gameData.components.transmission_types[transmissionType].efficiency || 0.85, gearRatios: gameData.components.transmission_types[transmissionType].gear_ratios || [1.0], finalDriveRatio: gameData.components.transmission_types[transmissionType].final_drive_ratio || 8.5, max_speed_road_limit: gameData.components.transmission_types[transmissionType].max_speed_road_limit || Infinity, max_speed_offroad_limit: gameData.components.transmission_types[transmissionType].max_speed_offroad_limit || Infinity },
-                chassis: { driveSprocketRadiusM: gameData.components.mobility_types[mobilityType].drive_sprocket_radius_m || 0.4, frontalAreaM2: gameData.components.vehicle_types[vehicleType].frontal_area_m2 || 3.0, dragCoefficient: gameData.components.vehicle_types[vehicleType].drag_coefficient || 1.0 },
-                environment: { rollingResistanceCoeff: gameData.components.mobility_types[mobilityType].rolling_resistance_coeff_road || 0.02, slopeDegrees: 0, airDensity: 1.225 }
-            });
-
-            if (roadPerformance.powerToWeightRatio >= P_TO_W_THRESHOLD_GOOD && currentSpeedRoad >= 60) {
-                statusMessage = "💪 Blindado de alta performance!";
-                statusClass = "status-ok";
-            } else if (roadPerformance.powerToWeightRatio >= P_TO_W_THRESHOLD_OK && currentSpeedRoad >= 50) {
-                statusMessage = "✅ Configuração bem equilibrada.";
-                statusClass = "status-ok";
+            const P_TO_W_THRESHOLD_OK = 15;
+            const currentTotalWeight = parseFloat(tankDataOutput.totalWeight.replace(' kg', '').replace(/\./g, '').replace(',', '.'));
+            const currentTotalPower = parseFloat(tankDataOutput.totalPower.replace(' hp', '').replace(/\./g, '').replace(',', '.'));
+            const powerToWeightRatio = currentTotalPower / (currentTotalWeight / 1000);
+            
+            const currentSpeedRoad = parseFloat(tankDataOutput.speedRoad.replace(' km/h', '').replace(/\./g, '').replace(',', '.'));
+            const currentEffectiveArmorFront = parseFloat(tankDataOutput.effectiveArmorFront.replace(' mm', '').replace(/\./g, '').replace(',', '.'));
+            const currentCrewComfort = parseFloat(tankDataOutput.crewComfort.replace('%', '').replace(',', '.'));
+            const currentReliability = parseFloat(tankDataOutput.reliability.replace('%', '').replace(',', '.')) / 100;
+            
+            if (powerToWeightRatio >= P_TO_W_THRESHOLD_GOOD && currentSpeedRoad >= 60) {
+                statusMessage = "Força industrial";
+                statusClass = "ok";
+            } else if (powerToWeightRatio >= P_TO_W_THRESHOLD_OK && currentSpeedRoad >= 50) {
+                statusMessage = "Equilíbrio";
+                statusClass = "ok";
             } else if (currentSpeedRoad < 40) {
-                statusMessage = "⚠️ Veículo um pouco lento, pode ter problemas de mobilidade.";
-                statusClass = "status-warning";
+                statusMessage = "Mobilidade baixa";
+                statusClass = "warn";
             } else if (currentReliability < 0.7) {
-                statusMessage = "🔥 Confiabilidade baixa: Propenso a avarias!";
-                statusClass = "status-error";
+                statusMessage = "Confiabilidade baixa";
+                statusClass = "err";
             } else if (currentCrewComfort < 60) {
-                statusMessage = "😓 Conforto da tripulação muito baixo! Afetará desempenho em combate.";
-                statusClass = "status-warning";
+                statusMessage = "Conforto baixo";
+                statusClass = "warn";
             } else {
-                statusMessage = "✅ Configuração básica ok.";
-                statusClass = "status-ok";
+                statusMessage = "Configuração ok";
+                statusClass = "ok";
             }
         }
-        uiElements.statusEl.textContent = statusMessage;
-        uiElements.statusEl.className = `status-indicator ${statusClass}`;
+        if (uiElements.statusEl) {
+            uiElements.statusEl.className = `inline`;
+            const pills = uiElements.statusEl.querySelectorAll('.pill');
+            pills.forEach(pill => pill.style.display = 'none');
+            const targetPill = uiElements.statusEl.querySelector(`.pill.${statusClass}`);
+            if (targetPill) {
+                targetPill.style.display = 'inline-block';
+                targetPill.textContent = statusMessage;
+            }
+        }
         tankDataOutput.statusMessage = statusMessage;
         tankDataOutput.statusClass = statusClass;
     }
+
+    const generateFicha = () => {
+        const tankData = tankDataOutput; 
+        localStorage.setItem('tankSheetData', JSON.stringify(tankData));
+        localStorage.setItem('realWorldTanksData', JSON.stringify(realWorldTanks)); 
+        window.open('ficha.html', '_blank'); 
+    };
+    window.generateFicha = generateFicha;
+
 
     processBasicInfoAndDoctrine(uiElements);
     const { typeData, mobilityData } = processChassisAndMobility(uiElements);
@@ -1534,16 +1496,15 @@ window.onload = function() {
     calculateNumericalRanges(); 
 
     window.updateCalculations = updateCalculations;
+    document.querySelectorAll('input, select').forEach(el => {
+      el.addEventListener('change', updateCalculations);
+      el.addEventListener('input', updateCalculations);
+    });
 
     const summaryPanel = document.querySelector('.summary-panel');
     if (summaryPanel) {
         summaryPanel.style.cursor = 'pointer'; 
         summaryPanel.title = 'Clique para gerar a ficha detalhada do blindado'; 
-        summaryPanel.addEventListener('click', () => {
-            const tankData = updateCalculations(); 
-            localStorage.setItem('tankSheetData', JSON.stringify(tankData));
-            localStorage.setItem('realWorldTanksData', JSON.stringify(realWorldTanks)); 
-            window.open('ficha.html', '_blank'); 
-        });
+        summaryPanel.addEventListener('click', generateFicha);
     }
 };
