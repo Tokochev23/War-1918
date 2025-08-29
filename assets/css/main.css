@@ -54,6 +54,11 @@ body::before{
 
 /* Grid principal */
 .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-top:16px}
+.form-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
 /* Cards/seções */
 .form-section{
@@ -77,7 +82,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);
 
 /* Resumo */
 .summary-panel{
-  background:linear-gradient(180deg,#0b1520,#0a131c);border:1px solid var(--stroke);border-radius:14px;padding:16px
+  background:linear-gradient(180deg,#0b1520,#0a131c);border:1px solid var(--stroke);border-radius:14px;padding:16px;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
 }
 .summary-panel h3{margin:0 0 10px;color:#d7e7f7}
 .summary-item{display:flex;justify-content:space-between;border-bottom:1px dashed #263547;padding:8px 0;font-size:14px}
@@ -107,11 +115,21 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);
 .btn:hover,.button:hover,.save-button:hover,.back-button:hover{transform:translateY(-1px);border-color:var(--accent);box-shadow:0 10px 22px rgba(0,0,0,.45)}
 
 /* Doutrina → cor de acento */
+body.doctrine-qualitative .form-section{border-left-color:var(--accent)}
 body.doctrine-quantitative .form-section{border-left-color:var(--accent-warsaw)}
 body.doctrine-regional .form-section{border-left-color:var(--accent-neutral)}
 
+/* Pills de status do resumo */
+#status.status-ok .pill.ok { display: inline-block; }
+#status.status-warn .pill.warn { display: inline-block; }
+#status.status-error .pill.err { display: inline-block; }
+#status .pill { display: none; }
+
 /* Auxiliares */
 .muted{color:var(--muted)}
+.item-row { display: flex; align-items: center; justify-content: space-between; background: #0f1b26; padding: 10px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.05); margin-bottom: 8px; }
+.item-row input[type="number"] { width: 70px; text-align: center; }
+.item-row label { margin: 0; flex-grow: 1; }
 
 /* Responsivo */
 @media (max-width: 920px){
