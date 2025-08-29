@@ -1,464 +1,81 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criador de Blindados - Guerra Fria 1954-1991</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/main.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criador de Blindados</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Stardos+Stencil:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="main.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🛡️ Criador de Blindados</h1>
-            <p>Sistema de Criação de Veículos Terrestres - RPG Guerra Fria 1954-1991</p>
-        </div>
+  <div class="era-banner">
+    <span class="era-tape"></span>
+    <span class="era-text">Guerra Fria · 1954–1991</span>
+    <span class="era-tape"></span>
+  </div>
 
-        <div class="main-content">
-            <div class="form-sections col-span-1 lg:col-span-2 space-y-6">
-                <div class="form-section">
-                    <h3>📝 Informações do Veículo e Doutrina</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="form-group">
-                            <label for="vehicle_name">Nome do Blindado:</label>
-                            <input type="text" id="vehicle_name" placeholder="Ex: M48 Patton" oninput="updateCalculations()">
-                        </div>
-                        <div class="form-group">
-                            <label for="quantity">Quantidade a Produzir:</label>
-                            <input type="number" id="quantity" min="1" max="999" value="1" oninput="updateCalculations()">
-                        </div>
-                    </div>
-                    <div class="form-group mt-4">
-                        <label for="country_doctrine">País de Origem / Doutrina:</label>
-                        <select id="country_doctrine" onchange="updateCalculations()">
-                            <option value="loading">Carregando países...</option>
-                            </select>
-                        <p id="country_bonus_note" class="text-sm" style="color: #007bff;"></p>
-                    </div>
-                    <div class="form-group mt-4">
-                        <label for="tank_doctrine">Doutrina de Tanque:</label>
-                        <select id="tank_doctrine" onchange="updateCalculations()">
-                            <option value="">Selecione uma Doutrina...</option>
-                            <option value="qualitative_doctrine">Qualitativa (OTAN)</option>
-                            <option value="quantitative_doctrine">Quantitativa (Pacto de Varsóvia)</option>
-                            <option value="regional_defense_doctrine">Defesa Regional (Neutros)</option>
-                        </select>
-                        <p id="doctrine_note" class="text-sm" style="color: #ffc107;"></p>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <h3>⚖️ Balanço Produção vs. Qualidade</h3>
-                    <div class="form-group">
-                        <label for="production_quality_slider" class="flex justify-between items-center">
-                            <span>Qualidade 💎</span>
-                            <span>Produção 🏭</span>
-                        </label>
-                        <input type="range" id="production_quality_slider" min="0" max="100" value="50" oninput="updateCalculations()">
-                        <p id="production_quality_note" class="text-sm text-center mt-2" style="color: #6c757d;">Equilíbrio entre confiabilidade e capacidade de produção.</p>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <h3>🏗️ Chassi e Configuração Base</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="form-group">
-                            <label for="vehicle_type">Tipo de Veículo:</label>
-                            <select id="vehicle_type" onchange="updateCalculations()">
-                                <option value="">Selecione o tipo de veículo...</option>
-                                <option value="main_battle_tank">Carro de Combate Principal (Custo: 1.200.000)</option>
-                                <option value="infantry_fighting_vehicle">Veículo de Combate de Infantaria (Custo: 850.000)</option>
-                                <option value="armored_personnel_carrier">Veículo de Transporte de Pessoal (Custo: 600.000)</option>
-                                <option value="tank_destroyer">Caça-Tanques (Custo: 900.000)</option>
-                                <option value="self_propelled_artillery">Artilharia Autopropulsada (Custo: 1.100.000)</option>
-                                <option value="self_propelled_anti_aircraft">AA Autopropulsada (Custo: 950.000)</option>
-                                <option value="armored_car">Carro Blindado (Custo: 750.000)</option>
-                                <option value="light_armored_vehicle">Veículo Blindado Leve (Custo: 500.000)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="mobility_type">Tipo de Locomoção:</label>
-                            <select id="mobility_type" onchange="updateCalculations()">
-                                <option value="esteiras">Esteiras (Custo: 1.000.000)</option>
-                                <option value="rodas_blindadas">Rodas Blindadas (Custo: 800.000)</option>
-                                <option value="semi_lagartas">Semi-lagartas (Custo: 650.000)</option>
-                            </select>
-                        </div>
-                        <div class="form-group col-span-full">
-                            <label for="suspension_type">Tipo de Suspensão:</label>
-                            <select id="suspension_type" onchange="updateCalculations()">
-                                <option value="">Selecione a Suspensão...</option>
-                                <option value="torsion_bar">Barra de Torção (Custo: 40.000)</option>
-                                <option value="christie">Christie (Custo: 30.000)</option>
-                                <option value="hydropneumatic">Hidropneumática (Custo: 120.000)</option>
-                                <option value="coil_spring">Mola Helicoidal (Custo: 10.000)</option>
-                            </select>
-                            <p id="suspension_note" class="text-sm" style="color: #ffc107;"></p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <h3>⚙️ Motor e Propulsão</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="form-group">
-                            <label for="engine_type">Tipo de Motor:</label>
-                            <select id="engine_type" onchange="updateCalculations()">
-                                <option value="">Selecione um motor...</option>
-                                <option value="v12_diesel">V12 Diesel (Custo: 150.000)</option>
-                                <option value="v8_diesel">V8 Diesel (Custo: 120.000)</option>
-                                <option value="gas_turbine">Turbina a Gás (Custo: 250.000)</option>
-                                <option value="i6_gasoline">I6 Gasolina (Custo: 90.000)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="engine_power">Potência do Motor (HP):</label>
-                            <input type="number" id="engine_power" min="0" max="1500" value="0" oninput="updateCalculations()">
-                            <p id="engine_power_note" class="text-sm" style="color: #ffc107;"></p>
-                        </div>
-                        <div class="form-group">
-                            <label for="fuel_type">Tipo de Combustível:</label>
-                            <select id="fuel_type" onchange="updateCalculations()">
-                                <option value="diesel">Diesel</option>
-                                <option value="gasoline">Gasolina</option>
-                                <option value="multi_fuel">Multi-combustível</option>
-                            </select>
-                            <p id="fuel_note" class="text-sm" style="color: #ffc107;"></p>
-                        </div>
-                        <div class="form-group">
-                            <label for="engine_disposition">Disposição do Motor:</label>
-                            <select id="engine_disposition" onchange="updateCalculations()">
-                                <option value="rear">Traseira</option>
-                                <option value="front">Dianteira</option>
-                            </select>
-                            <p id="engine_disposition_note" class="text-sm" style="color: #ffc107;"></p>
-                        </div>
-                        <div class="form-group col-span-full">
-                            <label for="transmission_type">Tipo de Transmissão:</label>
-                            <select id="transmission_type" onchange="updateCalculations()">
-                                <option value="mechanical">Mecânica</option>
-                                <option value="hydromechanical">Hidromecânica</option>
-                                <option value="cross_drive">Cross-drive</option>
-                            </select>
-                            <p id="transmission_note" class="text-sm" style="color: #ffc107;"></p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <h3>🛡️ Blindagem</h3>
-                    <div class="form-group">
-                        <label for="armor_production_type">Tipo de Produção da Blindagem:</label>
-                        <select id="armor_production_type" onchange="updateCalculations()">
-                            <option value="rolled_homogeneous">Aço Laminado Homogêneo (RHA)</option>
-                            <option value="cast">Aço Fundido</option>
-                            <option value="composite">Blindagem Composta</option>
-                        </select>
-                        <p id="armor_production_note" class="text-sm" style="color: #ffc107;"></p>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                        <div class="form-group">
-                            <label for="armor_front">Blindagem Frontal Casco (mm):</label>
-                            <input type="number" id="armor_front" min="0" max="800" value="0" oninput="updateCalculations()">
-                        </div>
-                        <div class="form-group">
-                            <label for="armor_front_angle">Ângulo Frontal Casco (Graus da Vertical):</label>
-                            <input type="number" id="armor_front_angle" min="0" max="90" value="0" oninput="updateCalculations()">
-                        </div>
-                        <div class="form-group col-span-full">
-                            <label for="armor_side">Blindagem Lateral Casco (mm):</label>
-                            <input type="number" id="armor_side" min="0" max="400" value="0" oninput="updateCalculations()">
-                        </div>
-                        <div class="form-group col-span-full">
-                            <label for="armor_turret">Blindagem Torre (mm):</label>
-                            <input type="number" id="armor_turret" min="0" max="1000" value="0" oninput="updateCalculations()">
-                        </div>
-                    </div>
-
-                    <div class="space-y-2 mt-4">
-                            <div class="item-row">
-                                <input type="checkbox" id="explosive_reactive_armor" onchange="updateCalculations()">
-                                <label for="explosive_reactive_armor" class="tooltip">Blindagem Reativa (ERA)
-                                    <span class="tooltiptext">Blocos que detonam ao serem atingidos, ideal contra ogivas HEAT.</span>
-                                </label>
-                            </div>
-                            <div class="item-row">
-                                <input type="checkbox" id="spaced_armor" onchange="updateCalculations()">
-                                <label for="spaced_armor" class="tooltip">Blindagem Espaçada
-                                    <span class="tooltiptext">Pode deformar projéteis cinéticos e detonar HEAT prematuramente.</span>
-                                </label>
-                            </div>
-                            <div class="item-row">
-                                <input type="checkbox" id="bar_armor" onchange="updateCalculations()">
-                                <label for="bar_armor" class="tooltip">Bar Armor
-                                    <span class="tooltiptext">Proteção em forma de grade contra RPGs e armas HEAT.</span>
-                                </label>
-                            </div>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <h3>🔫 Armamentos</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="form-group">
-                            <label for="main_gun_caliber">Calibre Canhão Principal (mm):</label>
-                            <input type="number" id="main_gun_caliber" min="20" max="150" value="0" oninput="updateCalculations()">
-                        </div>
-                        <div class="form-group">
-                            <label for="gun_type">Tipo de Canhão:</label>
-                            <select id="gun_type" onchange="updateCalculations()">
-                                <option value="rifled">Alma Raiada (Rifled)</option>
-                                <option value="smoothbore">Alma Lisa (Smoothbore)</option>
-                            </select>
-                        </div>
-                        <div class="form-group col-span-full">
-                            <label for="reload_mechanism">Mecanismo de Recarga:</label>
-                            <select id="reload_mechanism" onchange="updateCalculations()">
-                                <option value="manual">Manual</option>
-                                <option value="autoloader">Autoloader (Carregador Automático)</option>
-                            </select>
-                            <p id="reload_mechanism_note" class="text-sm" style="color: #ffc107;"></p>
-                        </div>
-                        <div class="form-group col-span-full">
-                            <label for="total_ammo_capacity">Capacidade Total de Munição (projéteis):</label>
-                            <input type="number" id="total_ammo_capacity" min="0" max="150" value="0" oninput="updateCalculations()">
-                            <p id="total_ammo_capacity_note" class="text-sm" style="color: #ffc107;"></p>
-                        </div>
-                    </div>
-
-                    <h4 style="color: #495057; margin-top: 20px;">Tipos de Munição</h4>
-                    <div class="space-y-2">
-                        <div class="item-row">
-                            <input type="checkbox" id="ammo_apfsds_checkbox" onchange="updateCalculations()">
-                            <label for="ammo_apfsds_checkbox" class="tooltip">APFSDS
-                                <span class="tooltiptext">Projétil de energia cinética com aletas, alta velocidade e penetração.</span>
-                            </label>
-                            <input type="number" id="ammo_apfsds_qty" min="0" value="0" oninput="updateCalculations()">
-                        </div>
-                        <div class="item-row">
-                            <input type="checkbox" id="ammo_heat_checkbox" onchange="updateCalculations()">
-                            <label for="ammo_heat_checkbox" class="tooltip">HEAT
-                                <span class="tooltiptext">Ogiva de alto explosivo antitanque, eficaz contra blindagem de aço e compostos.</span>
-                            </label>
-                            <input type="number" id="ammo_heat_qty" min="0" value="0" oninput="updateCalculations()">
-                        </div>
-                        <div class="item-row">
-                            <input type="checkbox" id="ammo_he_checkbox" onchange="updateCalculations()">
-                            <label for="ammo_he_checkbox">HE (High-Explosive)</label>
-                            <input type="number" id="ammo_he_qty" min="0" value="0" oninput="updateCalculations()">
-                        </div>
-                        <div class="item-row">
-                            <input type="checkbox" id="ammo_atgm_checkbox" onchange="updateCalculations()">
-                            <label for="ammo_atgm_checkbox" class="tooltip">ATGM
-                                <span class="tooltiptext">Míssil guiado antitanque.</span>
-                            </label>
-                            <input type="number" id="ammo_atgm_qty" min="0" value="0" oninput="updateCalculations()">
-                        </div>
-                        <p id="ammo_qty_note" class="text-sm" style="color: #dc3545;"></p>
-                    </div>
-
-                    <h4 style="color: #495057; margin-top: 20px;">Armamento Secundário</h4>
-                    <div class="space-y-2">
-                        <div class="item-row">
-                            <input type="checkbox" id="coaxial_mg_checkbox" onchange="updateCalculations()">
-                            <label for="coaxial_mg_checkbox">Metralhadora Coaxial (Custo: 15.000)</label>
-                            <input type="number" id="coaxial_mg_qty" min="0" max="2" value="0" oninput="updateCalculations()">
-                        </div>
-                        <div class="item-row">
-                            <input type="checkbox" id="aa_mg_checkbox" onchange="updateCalculations()">
-                            <label for="aa_mg_checkbox" class="tooltip">Metralhadora Antiaérea (Custo: 25.000)
-                                <span class="tooltiptext">Defesa contra aeronaves e infantaria.</span>
-                                </label>
-                            <input type="number" id="aa_mg_qty" min="0" max="1" value="0" oninput="updateCalculations()">
-                        </div>
-                        <div class="item-row">
-                            <input type="checkbox" id="smoke_dischargers_checkbox" onchange="updateCalculations()">
-                            <label for="smoke_dischargers_checkbox" class="tooltip">Lançadores de Fumaça (Custo: 10.000)
-                                <span class="tooltiptext">Cria cortinas de fumaça para ocultação.</span>
-                            </label>
-                            <span></span>
-                        </div>
-                        <div class="item-row">
-                            <input type="checkbox" id="grenade_mortars_checkbox" onchange="updateCalculations()">
-                            <label for="grenade_mortars_checkbox" class="tooltip">Lançadores de Granadas/Morteiros (Custo: 20.000)
-                                <span class="tooltiptext">Suporte de fogo indireto contra alvos em cobertura.</span>
-                            </label>
-                            <span></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <h3>📡 Equipamentos Extras</h3>
-                    <div class="space-y-2">
-                        <div class="item-row">
-                            <input type="checkbox" id="laser_rangefinder" onchange="updateCalculations()">
-                            <label for="laser_rangefinder" class="tooltip">Telêmetro a Laser (Custo: 80.000)
-                                <span class="tooltiptext">Aumenta a precisão de tiro em longa distância.</span>
-                            </label>
-                            <span></span>
-                        </div>
-                        <div class="item-row">
-                            <input type="checkbox" id="thermal_sights" onchange="updateCalculations()">
-                            <label for="thermal_sights" class="tooltip">Miras Térmicas (Custo: 150.000)
-                                <span class="tooltiptext">Detecção de alvos em qualquer condição de luz.</span>
-                            </label>
-                            <span></span>
-                        </div>
-                        <div class="item-row">
-                            <input type="checkbox" id="fire_control_system" onchange="updateCalculations()">
-                            <label for="fire_control_system" class="tooltip">Sistema de Controle de Tiro (Custo: 200.000)
-                                <span class="tooltiptext">Calcula automaticamente a solução de tiro para o artilheiro.</span>
-                            </label>
-                            <span></span>
-                        </div>
-                        <div class="item-row">
-                            <input type="checkbox" id="stabilizer" onchange="updateCalculations()">
-                            <label for="stabilizer" class="tooltip">Estabilizador de Canhão (Custo: 70.000)
-                                <span class="tooltiptext">Permite atirar com precisão em movimento.</span>
-                            </label>
-                            <span></span>
-                        </div>
-                        <div class="item-row">
-                            <input type="checkbox" id="NBC_protection" onchange="updateCalculations()">
-                            <label for="NBC_protection" class="tooltip">Proteção NBC (Custo: 50.000)
-                                <span class="tooltiptext">Sistema de pressurização para proteger a tripulação de agentes nucleares, biológicos e químicos.</span>
-                            </label>
-                            <span></span>
-                        </div>
-                        <div class="item-row">
-                            <input type="checkbox" id="dozer_blades" onchange="updateCalculations()">
-                            <label for="dozer_blades" class="tooltip">Lâminas de Escavadeira (Custo: 30.000)
-                                <span class="tooltiptext">Permite limpeza de obstáculos e criação de posições defensivas.</span>
-                            </label>
-                            <span></span>
-                        </div>
-                        <div class="item-row">
-                            <input type="checkbox" id="extra_fuel" onchange="updateCalculations()">
-                            <label for="extra_fuel" class="tooltip">Tanques Extras de Combustível (Custo: 10.000)
-                                <span class="tooltiptext">Aumenta o raio de ação.</span>
-                            </label>
-                            <span></span>
-                        </div>
-                        <div class="item-row">
-                            <input type="checkbox" id="radio_equipment" onchange="updateCalculations()">
-                            <label for="radio_equipment" class="tooltip">Rádio (Custo: 40.000)</label>
-                            <span></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <h3>👥 Tripulação</h3>
-                    <div class="form-group">
-                        <label for="num_crewmen">Número de Tripulantes:</label>
-                        <input type="number" id="num_crewmen" min="2" max="6" value="4" oninput="updateCalculations()">
-                        <p id="crew_note" class="text-sm" style="color: #ffc107;"></p>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="summary-panel">
-                <h3>📊 Resumo do Blindado</h3>
-
-                <div class="bg-gray-100 p-4 rounded-lg space-y-2" style="border: 1px solid #e0e0e0;">
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Nome:</span>
-                        <span id="display_name" class="font-medium" style="color: #007bff;">Sem nome</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Tipo:</span>
-                        <span id="display_type" class="font-medium" style="color: #007bff;">-</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Doutrina:</span>
-                        <span id="display_doctrine" class="font-medium" style="color: #007bff;">-</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Custo/Unid:</span>
-                        <span id="unit_cost" class="font-medium" style="color: #007bff;">0</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Peso Total:</span>
-                        <span id="total_weight" class="font-medium" style="color: #007bff;">0 kg</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Potência Total:</span>
-                        <span id="total_power" class="font-medium" style="color: #007bff;">0 hp</span>
-                    </div>
-                </div>
-
-                <div class="bg-gray-100 p-4 rounded-lg space-y-2 mt-4" style="border: 1px solid #e0e0e0;">
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Velocidade Máx (Estrada):</span>
-                        <span id="speed_road" class="font-medium" style="color: #28a745;">0 km/h</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Velocidade Máx (Off-road):</span>
-                        <span id="speed_offroad" class="font-medium" style="color: #28a745;">0 km/h</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Blindagem Efetiva (Frontal):</span>
-                        <span id="effective_armor_front_display" class="font-medium" style="color: #28a745;">0 mm</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Blindagem Efetiva (Lateral):</span>
-                        <span id="effective_armor_side_display" class="font-medium" style="color: #28a745;">0 mm</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Armamento Principal:</span>
-                        <span id="main_armament" class="font-medium" style="color: #28a745;">N/A</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Alcance Máximo:</span>
-                        <span id="max_range" class="font-medium" style="color: #28a745;">0 km</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Conforto da Tripulação:</span>
-                        <span id="crew_comfort_display" class="font-medium" style="color: #28a745;">0%</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Confiabilidade:</span>
-                        <span id="reliability_display" class="font-medium" style="color: #28a745;">0%</span>
-                    </div>
-                </div>
-
-                <div class="bg-gray-100 p-4 rounded-lg space-y-2 mt-4" style="border: 1px solid #e0e0e0;">
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold" id="total_cost_label">Custo Total (1x):</span>
-                        <span id="total_production_cost" class="text-xl font-bold" style="color: #007bff;">0</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Custo em Metal (Total):</span>
-                        <span id="total_metal_cost" class="text-xl font-bold" style="color: #ffc107;">0</span>
-                    </div>
-                </div>
-
-                <div class="bg-gray-100 p-4 rounded-lg space-y-2 mt-4" style="border: 1px solid #e0e0e0;">
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Capacidade de Produção (País):</span>
-                        <span id="country_production_capacity" class="font-medium" style="color: #6f42c1;">N/A</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Unidades Produzíveis (Max):</span>
-                        <span id="producible_units" class="font-medium" style="color: #6f42c1;">N/A</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Saldo de Metais (País):</span>
-                        <span id="country_metal_balance" class="font-medium" style="color: #dc3545;">N/A</span>
-                    </div>
-                    <div id="metal_balance_status" class="text-sm font-medium mt-1 text-center" style="color: #495057;"></div>
-                </div>
-
-                <div id="status" class="status-indicator" style="background: #f8f9fa; color: #495057; border: 1px solid #dee2e6;">
-                    Selecione o tipo de veículo e motor para começar
-                </div>
-            </div>
-        </div>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>Criador de Blindados</h1>
+        <p>Monte um MBT coerente com a doutrina, a indústria e a economia do seu país.</p>
+      </div>
     </div>
 
-    <script src="assets/js/main.js"></script>
+    <div class="grid">
+      <section class="form-section">
+        <h3>Configurações básicas</h3>
+        <div class="row">
+          <div>
+            <label>Nome do MBT</label>
+            <input type="text" id="tank_name" placeholder="Ex.: M-62 Carcará" />
+          </div>
+          <div>
+            <label>Doutrina</label>
+            <select id="tank_doctrine">
+              <option value="qualitative_doctrine">Qualitativa (OTAN)</option>
+              <option value="quantitative_doctrine">Quantitativa (Pacto de Varsóvia)</option>
+              <option value="regional_defense_doctrine">Defesa Regional</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row3">
+          <div>
+            <label>Peso (t)</label>
+            <input type="number" id="tank_weight" placeholder="50" />
+          </div>
+          <div>
+            <label>Blindagem frontal (mm)</label>
+            <input type="number" id="tank_armor" placeholder="180" />
+          </div>
+          <div>
+            <label>Motor (hp)</label>
+            <input type="number" id="tank_engine" placeholder="850" />
+          </div>
+        </div>
+      </section>
+
+      <aside class="summary-panel">
+        <h3>Resumo</h3>
+        <div id="summary"></div>
+      </aside>
+    </div>
+
+    <section class="form-section" style="margin-top:16px">
+      <h3>Produção × Qualidade</h3>
+      <input id="production_quality_slider" type="range" min="0" max="100" value="60" style="width:100%" />
+      <div id="production_quality_note" class="muted"></div>
+      <div class="blueprint-section">
+        <canvas id="tankBlueprint"></canvas>
+      </div>
+      <div class="buttons">
+        <button class="btn save-button">Salvar Protótipo</button>
+        <button class="btn back-button">Gerar Ficha</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="main.js"></script>
 </body>
 </html>
